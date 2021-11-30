@@ -57,6 +57,24 @@ class BinarySearchTree:
                 current = current.right
         raise KeyError #The key was not in the BST
 
+    def inorder_traverse(self):
+        node_list = []
+        self._inorder(self.root,node_list)
+        return node_list
+    
+    def _inorder(self, current_node : Node, node_ls : List):
+        if current_node is None:
+            return
+        self._inorder(current_node.left, node_ls)
+        node_ls.append(current_node)
+        self._inorder(current_node.right, node_ls)
+
+
+    @property
+    def keys(self):
+        return [node.key for node in self.inorder_traverse()]
+
 
 if __name__ == "__main__":
-    pass
+    bst = BinarySearchTree([(14,"first"),(1,"second"),(23,"third"),(5,"fourth"),(11,"fifth")])
+    print(bst.keys)

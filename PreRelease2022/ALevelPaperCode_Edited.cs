@@ -23,19 +23,19 @@ namespace Breakthrough
     class Breakthrough
     {
         private static Random RNoGen = new Random(); //Random number generation
-        private CardCollection Deck;
-        private CardCollection Hand;
-        private CardCollection Sequence;
-        private CardCollection Discard;
+        private CardCollection Deck; //The total deck
+        private CardCollection Hand; //The cards that are in the player's hand
+        private CardCollection Sequence; //The sequence played
+        private CardCollection Discard; //The collection of discarded cards
         private List<Lock> Locks = new List<Lock>();
         private int Score;
         private bool GameOver;
         private Lock CurrentLock;
         private bool LockSolved;
 
-        public Breakthrough()
+        public Breakthrough() //Constructor
         {
-            Deck = new CardCollection("DECK"); //Should use an enum or constants rather than just caps strings
+            Deck = new CardCollection("DECK"); //The constructor takes in the name as an argument
             Hand = new CardCollection("HAND");
             Sequence = new CardCollection("SEQUENCE");
             Discard = new CardCollection("DISCARD");
@@ -61,17 +61,17 @@ namespace Breakthrough
                         Console.WriteLine(CurrentLock.GetLockDetails());
                         Console.WriteLine(Sequence.GetCardDisplay());
                         Console.WriteLine(Hand.GetCardDisplay());
-                        MenuChoice = GetChoice();
+                        MenuChoice = GetChoice(); //D or U
                         switch (MenuChoice)
                         {
                             case "D":
-                                {
+                                { //Display the discard pile
                                     Console.WriteLine(Discard.GetCardDisplay());
                                     break;
                                 }
                             case "U":
                                 {
-                                    int CardChoice = GetCardChoice();
+                                    int CardChoice = GetCardChoice(); //The card number, validated only to be a number, not validated for index
                                     string DiscardOrPlay = GetDiscardOrPlayChoice();
                                     if (DiscardOrPlay == "D")
                                     {
@@ -79,7 +79,9 @@ namespace Breakthrough
                                         GetCardFromDeck(CardChoice);
                                     }
                                     else if (DiscardOrPlay == "P")
+                                    {
                                         PlayCardToSequence(CardChoice);
+                                    }
                                     break;
                                 }
                         }
@@ -122,13 +124,13 @@ namespace Breakthrough
         }
 
         private void SetupGame()
-        {
+        { //Load a game or start a game
             string Choice;
             Console.Write("Enter L to load a game from a file, anything else to play a new game:> ");
             Choice = Console.ReadLine().ToUpper();
             if (Choice == "L")
-            {
-                if (!LoadGame("game1.txt"))
+            { //Load a game from 
+                if (!LoadGame("game1.txt")) //Try loading the game
                 {
                     GameOver = true;
                 }
@@ -148,9 +150,9 @@ namespace Breakthrough
         }
 
         private void PlayCardToSequence(int cardChoice)
-        {
+        { //Card choice should be a number from 1-5, from which 1 is subtracted to make it an index
             if (Sequence.GetNumberOfCards() > 0)
-            {
+            { //Sequence is not empty, so played card can't be the same as the previously played card (specifically the first card)
                 if (Hand.GetCardDescriptionAt(cardChoice - 1)[0] != Sequence.GetCardDescriptionAt(Sequence.GetNumberOfCards() - 1)[0])
                 {
                     Score += MoveCard(Hand, Sequence, Hand.GetCardNumberAt(cardChoice - 1));
@@ -175,7 +177,7 @@ namespace Breakthrough
         {
             string SequenceAsString = "";
             for (int Count = Sequence.GetNumberOfCards() - 1; Count >= Math.Max(0, Sequence.GetNumberOfCards() - 3); Count--)
-            {
+            { //For loop goes backwards
                 if (SequenceAsString.Length > 0)
                 {
                     SequenceAsString = ", " + SequenceAsString;
@@ -221,14 +223,14 @@ namespace Breakthrough
         }
 
         private void SetupLock(string line1, string line2)
-        {
+        { //CurrentLock is a state variable of the object. Probably would have been better to pass by reference instead
             List<string> SplitLine;
-            SplitLine = line1.Split(';').ToList();
+            SplitLine = line1.Split(';').ToList(); //Splits into list from the ;
             foreach (var Item in SplitLine)
             {
                 List<string> Conditions;
-                Conditions = Item.Split(',').ToList();
-                CurrentLock.AddChallenge(Conditions);
+                Conditions = Item.Split(',').ToList(); //The challenges of the lock are separated by a ,
+                CurrentLock.AddChallenge(Conditions); //Add challenge to the lock
             }
             SplitLine = line2.Split(';').ToList();
             for (int Count = 0; Count < SplitLine.Count; Count++)
@@ -241,18 +243,18 @@ namespace Breakthrough
         }
 
         private bool LoadGame(string fileName)
-        {
+        { //Returns true if successful
             string LineFromFile;
             string LineFromFile2;
             try
             {
                 using (StreamReader MyStream = new StreamReader(fileName))
                 {
-                    LineFromFile = MyStream.ReadLine();
-                    Score = Convert.ToInt32(LineFromFile);
-                    LineFromFile = MyStream.ReadLine();
+                    LineFromFile = MyStream.ReadLine(); //Reads the line in
+                    Score = Convert.ToInt32(LineFromFile); //First line is the score
+                    LineFromFile = MyStream.ReadLine(); //Read the next two lines
                     LineFromFile2 = MyStream.ReadLine();
-                    SetupLock(LineFromFile, LineFromFile2);
+                    SetupLock(LineFromFile, LineFromFile2); //Set up lock 
                     LineFromFile = MyStream.ReadLine();
                     SetupCardCollectionFromGameFile(LineFromFile, Hand);
                     LineFromFile = MyStream.ReadLine();
@@ -273,38 +275,38 @@ namespace Breakthrough
 
         private void LoadLocks()
         {
-            string FileName = "locks.txt";
+            string FileName = "locks.txt"; //This is hard coded in
             string LineFromFile;
             List<string> Challenges;
-            Locks = new List<Lock>();
+            Locks = new List<Lock>(); //Initialises the class varialbe
             try
             {
-                using (StreamReader MyStream = new StreamReader(FileName))
+                using (StreamReader MyStream = new StreamReader(FileName)) //Opens file
                 {
                     LineFromFile = MyStream.ReadLine();
-                    while (LineFromFile != null)
+                    while (LineFromFile != null) //Each line is a lock
                     {
-                        Challenges = LineFromFile.Split(';').ToList();
-                        Lock LockFromFile = new Lock();
+                        Challenges = LineFromFile.Split(';').ToList(); //Challenges for a lock are separated by ;
+                        Lock LockFromFile = new Lock(); //Creates lock object
                         foreach (var C in Challenges)
                         {
                             List<string> Conditions = new List<string>();
-                            Conditions = C.Split(',').ToList();
-                            LockFromFile.AddChallenge(Conditions);
+                            Conditions = C.Split(',').ToList(); //The sequence for that challenge, with conditions separated by ,
+                            LockFromFile.AddChallenge(Conditions); //Change internal state through function
                         }
-                        Locks.Add(LockFromFile);
-                        LineFromFile = MyStream.ReadLine();
+                        Locks.Add(LockFromFile); //Add lock to the list
+                        LineFromFile = MyStream.ReadLine(); //Move to the next line of the file
                     }
                 }
             }
             catch
-            {
-                Console.WriteLine("File not loaded");
+            { //Does it actually check later if the file hasn't been loaded
+                Console.WriteLine("File not loaded"); //Couldn't find file or error in formating of file possible
             }
         }
 
         private Lock GetRandomLock()
-        {
+        { //Does not check if lock is already solved?
             return Locks[RNoGen.Next(0, Locks.Count)];
         }
 
@@ -366,7 +368,7 @@ namespace Breakthrough
         }
 
         private string GetChoice()
-        {
+        { //Choose between inspect discard pile or use card
             Console.WriteLine();
             Console.Write("(D)iscard inspect, (U)se card:> ");
             string Choice = Console.ReadLine().ToUpper();
@@ -414,7 +416,7 @@ namespace Breakthrough
         {
             int Score = 0;
             if (fromCollection.GetName() == "HAND" && toCollection.GetName() == "SEQUENCE")
-            {
+            { //The only difference between the two branches of the if is that this branch changes the score
                 Card CardToMove = fromCollection.RemoveCard(cardNumber);
                 if (CardToMove != null)
                 {
@@ -444,7 +446,7 @@ namespace Breakthrough
             Met = false;
         }
 
-        public bool GetMet()
+        public bool GetMet() //Manual implementation of properties
         {
             return Met;
         }
@@ -470,7 +472,7 @@ namespace Breakthrough
         protected List<Challenge> Challenges = new List<Challenge>();
 
         public virtual void AddChallenge(List<string> condition)
-        {
+        { //Wrapper for creating challenge object, setting conditions and adding to list
             Challenge C = new Challenge();
             C.SetCondition(condition);
             Challenges.Add(C);
@@ -491,7 +493,7 @@ namespace Breakthrough
         {
             string LockDetails = Environment.NewLine + "CURRENT LOCK" + Environment.NewLine + "------------" + Environment.NewLine;
             foreach (var C in Challenges)
-            {
+            { // Foreach challenge in the lock
                 if (C.GetMet())
                 {
                     LockDetails += "Challenge met: ";
@@ -521,7 +523,7 @@ namespace Breakthrough
         public virtual bool CheckIfConditionMet(string sequence)
         {
             foreach (var C in Challenges)
-            {
+            { //Checks each challenge in the lock to see if the sequence passed in matches any conditions
                 if (!C.GetMet() && sequence == ConvertConditionToString(C.GetCondition()))
                 {
                     C.SetMet(true);
@@ -576,8 +578,8 @@ namespace Breakthrough
         }
 
         public virtual string GetDescription()
-        {
-            if (CardNumber < 10)
+        { //TODO Why does this exist??
+            if (CardNumber < 10) //What is the significance of this?
             {
                 return " " + CardNumber.ToString();
             }
@@ -600,11 +602,11 @@ namespace Breakthrough
             SetScore();
         }
 
-        public ToolCard(string t, string k, int cardNo)
+        public ToolCard(string t, string k, int cardNo) // also : base()
         {
             ToolType = t;
             Kit = k;
-            CardNumber = cardNo;
+            CardNumber = cardNo; //Overrides 
             SetScore();
         }
 
@@ -691,7 +693,7 @@ namespace Breakthrough
     }
 
     class CardCollection
-    {
+    { //Wrapper for list of cards
         protected List<Card> Cards = new List<Card>();
         protected string Name;
 
@@ -700,23 +702,23 @@ namespace Breakthrough
             Name = n;
         }
 
-        public string GetName()
+        public string GetName() //Should be property
         {
             return Name;
         }
 
         public int GetCardNumberAt(int x)
-        {
+        { //Accesses the xth card and returns its card number
             return Cards[x].GetCardNumber();
         }
 
         public string GetCardDescriptionAt(int x)
-        {
+        { //Accesses xth card and gets description
             return Cards[x].GetDescription();
         }
 
         public void AddCard(Card c)
-        {
+        { //Adds to the list
             Cards.Add(c);
         }
 
@@ -730,8 +732,8 @@ namespace Breakthrough
             Random RNoGen = new Random();
             Card TempCard;
             int RNo1, RNo2;
-            for (int Count = 1; Count <= 10000; Count++)
-            {
+            for (int Count = 1; Count <= 10000; Count++) //Shuffles 10,000 times
+            { //Randomly chooses two cards and swaps them
                 RNo1 = RNoGen.Next(0, Cards.Count);
                 RNo2 = RNoGen.Next(0, Cards.Count);
                 TempCard = Cards[RNo1];
@@ -758,12 +760,12 @@ namespace Breakthrough
             return CardToGet;
         }
 
-        private string CreateLineOfDashes(int size)
+        private string CreateLineOfDashes(int size) //Should be static function
         {
             string LineOfDashes = "";
             for (int Count = 1; Count <= size; Count++)
             {
-                LineOfDashes += "------";
+                LineOfDashes += "------"; //For each card, 6 dashes are added
             }
             return LineOfDashes;
         }
@@ -772,7 +774,7 @@ namespace Breakthrough
         {
             string CardDisplay = Environment.NewLine + Name + ":";
             if (Cards.Count == 0)
-            {
+            { //Exit here
                 return CardDisplay + " empty" + Environment.NewLine + Environment.NewLine;
             }
             else
@@ -789,13 +791,13 @@ namespace Breakthrough
             {
                 LineOfDashes = CreateLineOfDashes(Cards.Count);
             }
-            CardDisplay += LineOfDashes + Environment.NewLine;
+            CardDisplay += LineOfDashes + Environment.NewLine; //List of dashes above the cards
             bool Complete = false;
             int Pos = 0;
-            while (!Complete)
+            while (!Complete) //This is a for loop
             {
                 CardDisplay += "| " + Cards[Pos].GetDescription() + " ";
-                Pos++;
+                Pos++; //It is necessary to increment before executing this if statement, otherwise this will result in an incorrect result
                 if (Pos % CardsPerLine == 0)
                 {
                     CardDisplay += "|" + Environment.NewLine + LineOfDashes + Environment.NewLine;
@@ -806,7 +808,7 @@ namespace Breakthrough
                 }
             }
             if (Cards.Count % CardsPerLine > 0)
-            {
+            { //There is a line of cards with less than 10 cards
                 CardDisplay += "|" + Environment.NewLine;
                 if (Cards.Count > CardsPerLine)
                 {

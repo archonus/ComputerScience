@@ -6,6 +6,8 @@ class AdjacencyListGraph:
         def __init__(self, to, weight = 1):
             self.to = to
             self.weight = weight
+        def __repr__(self) -> str:
+            return "{"+f"to:'{self.to}', weight:{self.weight}" + "}"
 
     def __init__(self, adj_list = None, nodes = None):
         if adj_list:
@@ -14,6 +16,21 @@ class AdjacencyListGraph:
             self.adj_list = {k : [] for k in nodes}
         else: # Empty graph
             self.adj_list = {}
+    
+    def add_vertex(self, name):
+        if name not in self.adj_list:
+            self.adj_list[name] = []
+    
+    def add_edge(self, vertex_from, vertex_to, weight = 1):
+        edges = self.adj_list[vertex_from]
+        if vertex_to not in [e.to for e in edges]:
+            edge = AdjacencyListGraph.Edge(vertex_to, weight)
+            edges.append(edge)
+        else:
+            raise ValueError("Edge already exists")
+
+    def update_edge(self,vertex_from, vertext_to, weight):
+        edges = self.adj_list[vertex_from]
 
 class AdjacencyMatrixGraph:
     def __init__(self, vertices : List = None, adj_matrix = None):
@@ -61,8 +78,13 @@ class AdjacencyMatrixGraph:
 
 
 if __name__ == "__main__":
-    g = AdjacencyMatrixGraph()
-    print(g.adj_matrix)
-    g.add_vertices("A","B","C")
+    # g = AdjacencyMatrixGraph()
+    # print(g.adj_matrix)
+    # g.add_vertices("A","B","C")
+    # g.add_edge("A","B")
+    # print(g.adj_matrix)
+
+    g = AdjacencyListGraph(nodes = ["A","B","C"])
+    print(g.adj_list)
     g.add_edge("A","B")
-    print(g.adj_matrix)
+    print(g.adj_list)

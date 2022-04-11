@@ -604,9 +604,9 @@ namespace Breakthrough
 
         public ToolCard(string t, string k, int cardNo) // also : base()
         {
-            ToolType = t;
+            ToolType = t; //This could have been achieved by 
             Kit = k;
-            CardNumber = cardNo; //Overrides 
+            CardNumber = cardNo; //Overrides, but the static variable CardNumber is still incremented
             SetScore();
         }
 

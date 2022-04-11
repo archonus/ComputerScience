@@ -1,6 +1,29 @@
+from abc import ABC, abstractmethod
 from typing import List
 
-class AdjacencyListGraph:
+class Graph(ABC):
+
+    @abstractmethod
+    def add_edge(self, vertex_from, vertex_to,weight):
+        pass
+
+    @abstractmethod
+    def add_vertex(self, name):
+        pass
+    
+    @abstractmethod
+    def update_edge(self,vertex_from, vertext_to, weight):
+        pass
+
+    @abstractmethod
+    def get_edge_weight(self, vertex_from, vertex_to):
+        pass
+
+    @abstractmethod
+    def check_connected(self, vertex_from, vertex_to):
+        pass
+
+class AdjacencyListGraph(Graph):
     # Actually uses a dictionary instead of list
     class Edge:
         def __init__(self, to, weight = 1):
@@ -23,16 +46,37 @@ class AdjacencyListGraph:
     
     def add_edge(self, vertex_from, vertex_to, weight = 1):
         edges = self.adj_list[vertex_from]
-        if vertex_to not in [e.to for e in edges]:
+        if self._get_edge(vertex_from,vertex_to):
+            raise ValueError("Edge already exists")
+        else:
             edge = AdjacencyListGraph.Edge(vertex_to, weight)
             edges.append(edge)
-        else:
-            raise ValueError("Edge already exists")
+
+    def _get_edge(self, vertex_from, vertex_to):
+        edges = self.adj_list[vertex_from]
+        for edge in edges:
+            if edge.to == vertex_to:
+                return edge
+        return None
 
     def update_edge(self,vertex_from, vertext_to, weight):
-        edges = self.adj_list[vertex_from]
+        edge = self._get_edge(vertex_from,vertext_to)
+        if edge: 
+            edge.weight = weight
+        else:
+            raise ValueError("Edge does not exist")
 
-class AdjacencyMatrixGraph:
+    def get_edge_weight(self, vertex_from, vertext_to):
+        edge = self._get_edge(vertex_from,vertext_to)
+        if edge: 
+            return edge.weight
+        else: 
+            raise ValueError("Edge does not exist")
+
+    def check_connected(self, vertex_from, vertex_to):
+        return self._get_edge(vertex_from,vertex_to) is not None
+
+class AdjacencyMatrixGraph(Graph):
     def __init__(self, vertices : List = None, adj_matrix = None):
         self.vertices = vertices[:] if vertices else [] # Should really be a deep copy
         self._count = len(self.vertices)
@@ -56,13 +100,13 @@ class AdjacencyMatrixGraph:
         index_to = self.vertices.index(vertex_to)
         self.adj_matrix[index_from][index_to] = weight
 
-    def edge_weight(self, vertex_from, vertex_to):
+    def get_edge_weight(self, vertex_from, vertex_to):
         index_from = self.vertices.index(vertex_from)
         index_to = self.vertices.index(vertex_to)
         return self.adj_matrix[index_from][index_to]
 
     def check_connected(self, vertex_from, vertex_to):
-        return self.edge_weight(vertex_from,vertex_to) != 0
+        return self.get_edge_weight(vertex_from,vertex_to) != 0
     
     @classmethod
     def from_adj_list(cls, adj_list : dict):
@@ -88,3 +132,5 @@ if __name__ == "__main__":
     print(g.adj_list)
     g.add_edge("A","B")
     print(g.adj_list)
+    g2 = AdjacencyMatrixGraph.from_adj_list(g.adj_list)
+    print(g2.adj_matrix)

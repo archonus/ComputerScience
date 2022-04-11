@@ -1,17 +1,17 @@
-class HashTableItem:
-    """Class representing an item in the hash table"""
-
-    def __init__(self, key, value):
-        self.key = key
-        self.value = value
-        self.next = None
-
-    def __repr__(self) -> str:
-        return f'<HashTableItem key:{self.key}, value:{self.value}, linked:{False if self.next is None else True}>'
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import Any
 
 
 class HashTable:
     INITIAL_CAPACITY = 8  # The intitial capacity of the hash table. Should implement resizing
+
+    @dataclass
+    class HashTableItem:
+        """Class representing an item in the hash table"""
+        key : Any
+        value : Any
+        next : HashTable.HashTableItem = None
 
     def __init__(self, initial_data=None):
         # The list is initialised to all None
@@ -68,7 +68,7 @@ class HashTable:
 
     def insert(self, key, value):
         """Insert an item into the hash table"""
-        item = HashTableItem(key, value)
+        item = HashTable.HashTableItem(key, value)
         index = self._get_index(key)
         if(self._buckets[index] is None):  # The bucket is empty
             self._buckets[index] = item

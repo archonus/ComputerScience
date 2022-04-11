@@ -112,12 +112,12 @@ class AdjacencyMatrixGraph(Graph):
         if name in self.vertices:
             raise ValueError("Vertex already exists")
         self.vertices.append(name)
-        if self.directed:
-            for row in self.adj_matrix:
-                row.append(0) # Add another entry to each row (add a column)   
+        for row in self.adj_matrix:
+            row.append(0) # Add another entry to each row (add a column) 
+        if self.directed:  
             self.adj_matrix.append([0 for i in range(len(self.vertices))])
         else:
-            pass
+            self.adj_matrix.append([])
 
     def add_vertices(self, *args):
         for name in args:
@@ -148,18 +148,21 @@ class AdjacencyMatrixGraph(Graph):
 
     def check_connected(self, vertex_from, vertex_to):
         return self.get_edge_weight(vertex_from,vertex_to) != 0
-    
-    @classmethod
-    def from_adj_list(cls, adj_list : dict):
-        vertices = list(adj_list) #List of the keys
-        adj_matrix = [[0 for i in range(len(vertices))] for j in range(len(vertices))] # n*n matrix
-        for i in range(len(vertices)):
-            vertex = vertices[i]
-            edges = adj_list[vertex]
-            for edge in edges:
-                index = vertices.index(edge.to) #Index of the destination node
-                adj_matrix[i][index] = edge.weight
-        return cls(vertices, adj_matrix)
+
+    def to_adj_list(self):
+        g = AdjacencyListGraph(vertices=self.vertices)
+        for i in range(self._count): # Iterate through all the vertices
+            vertex_from = self.vertices[i]
+            if self.directed:
+                for j in range(self._count):
+                    if self.adj_matrix[i][j] != 0:
+                        vertex_to = self.vertices[j]
+                        g.add_edge(vertex_from,vertex_to, self.adj_matrix[i][j])
+            else: # Undirected graph
+                for j in range(self._count - i - 1): # Reduced number of iterations
+                    if self.adj_matrix[i][j] != 0:
+                        vertex_to = self.vertices[i + j + 1]
+                        g.add_edge(vertex_from,vertex_to, self.adj_matrix[i][j])
 
 
 if __name__ == "__main__":
@@ -173,15 +176,11 @@ if __name__ == "__main__":
     # g.add_edge("E","C")
     # g.update_edge("A","B",2)
     # print(g.adj_list)
-    # g2 = AdjacencyMatrixGraph.from_adj_list(g.adj_list)
-    # g2.add_vertex("F")
-    # g2.add_edge("B","F")
-    # print(g2.adj_matrix)
-    # g3 = AdjacencyListGraph.from_adj_matrix(g2.vertices, g2.adj_matrix)
-    # print(g3.adj_list)
 
     g = AdjacencyMatrixGraph(vertices=["A","B","C","D"], directed=False)
     g.add_edge("A","B")
     g.add_edge("C","A")
     g.add_edge("D","C")
+    g.add_vertex("E")
+    g.add_edge("E","B")
     print(g.adj_matrix)

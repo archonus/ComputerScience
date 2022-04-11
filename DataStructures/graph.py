@@ -40,6 +40,10 @@ class AdjacencyListGraph(Graph):
         else: # Empty graph
             self.adj_list = {}
     
+    @property
+    def vertices(self):
+        return list(self.adj_list)
+
     def add_vertex(self, name):
         if name not in self.adj_list:
             self.adj_list[name] = []
@@ -76,18 +80,11 @@ class AdjacencyListGraph(Graph):
     def check_connected(self, vertex_from, vertex_to):
         return self._get_edge(vertex_from,vertex_to) is not None
 
-    @classmethod
-    def from_adj_matrix(cls,vertices, adj_matrix):
-        adj_list= {}
-        for i in range(len(vertices)):
-            vertex = vertices[i]
-            edges = []
-            for j in range(len(vertices)):
-                if adj_matrix[i][j] != 0:
-                    edge = AdjacencyListGraph.Edge(vertices[j], adj_matrix[i][j])
-                    edges.append(edge)
-            adj_list[vertex] = edges
-        return cls(adj_list)
+    def to_adj_matrix(self, directed = True):
+        g = AdjacencyMatrixGraph(vertices=self.vertices, directed=directed)
+        for vertex in self.adj_list:
+            for edge in self.adj_list[vertex]:
+                g.add_edge(vertex, edge.to, edge.weight)
 
 
 class AdjacencyMatrixGraph(Graph):

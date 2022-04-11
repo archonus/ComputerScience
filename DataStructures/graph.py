@@ -1,5 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import List
 
 class Graph(ABC):
@@ -26,12 +27,10 @@ class Graph(ABC):
 
 class AdjacencyListGraph(Graph):
     # Actually uses a dictionary instead of list
+    @dataclass
     class Edge:
-        def __init__(self, to, weight = 1):
-            self.to = to
-            self.weight = weight
-        def __repr__(self) -> str:
-            return "{"+f"to:'{self.to}', weight:{self.weight}" + "}"
+        to : str
+        weight : int = 1
 
     def __init__(self, adj_list = None, vertices = None):
         if adj_list:
@@ -185,5 +184,5 @@ if __name__ == "__main__":
     g.add_vertex("E")
     g.add_edge("E","B")
     print(g.adj_matrix)
-    g2 = g.to_adj_list()
-    print(g2.adj_list)
+    print(g.to_adj_list().adj_list)
+    print(g.to_adj_list().to_adj_matrix().adj_matrix)

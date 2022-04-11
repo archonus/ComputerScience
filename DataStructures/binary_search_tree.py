@@ -3,9 +3,11 @@ from typing import List, Tuple
 
 
 class BinarySearchTree:
-
+    """Class representing a binary search tree"""
     class Node:
+        """A node in a binary search tree"""
         def __init__(self, key, data, left: BinarySearchTree.Node = None, right: BinarySearchTree.Node = None):
+            #Takes in the key and the data of the node, as well as the left node and the right node
             self.key = key
             self.data = data
             self.left = left
@@ -14,12 +16,15 @@ class BinarySearchTree:
     def __init__(self, data: List[Tuple] = None):
         self.root = None
         self._count = 0
-        if data:
+        if data: # Insert data if it exists
             for k, v in data:
                 self.insert(k, v)
     
     def __len__(self):
         return self._count
+
+    def __getitem__(self, key):
+        return self.retrieve(key)
 
     def insert(self, key, value):
         node = BinarySearchTree.Node(key, value)
@@ -47,15 +52,11 @@ class BinarySearchTree:
             current.right = node
     
     def retrieve(self,key):
-        current = self.root
-        while current is not None:
-            if key == current.key:
-                return current.data
-            elif key < current.key:
-                current = current.left
-            else:
-                current = current.right
-        raise KeyError #The key was not in the BST
+        return self._find_item(key).data #Return the data of the item
+
+    def update(self, key, data):
+        node = self._find_item(key)
+        node.data = data
 
     def inorder_traverse(self):
         node_list = []
@@ -69,6 +70,17 @@ class BinarySearchTree:
         node_ls.append(current_node)
         self._inorder(current_node.right, node_ls)
 
+    def _find_item(self, key):
+        current = self.root
+        while current is not None:
+            if key == current.key:
+                return current
+            elif key < current.key:
+                current = current.left
+            else:
+                current = current.right
+        raise KeyError #The key was not in the BST
+
 
     @property
     def keys(self):
@@ -77,4 +89,6 @@ class BinarySearchTree:
 
 if __name__ == "__main__":
     bst = BinarySearchTree([(14,"first"),(1,"second"),(23,"third"),(5,"fourth"),(11,"fifth")])
+    bst.update(5,"changed fourth")
+    print(bst[5])
     print(bst.keys)

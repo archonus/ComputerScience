@@ -39,6 +39,24 @@ class Graph(ABC):
                 connected.append(vertex_to)            
         return connected
 
+    def depth_first_traverse(self, start = None):
+        if start is None:
+            start = self.vertices[0]
+        visited = []
+        stack = [start]
+        while len(stack) > 0:
+            current = stack.pop()
+            if current not in visited:
+                visited.append(current)
+            for node in self.get_connected_vertices(current):
+                if node not in visited:
+                    stack.append(node)
+        
+        return visited
+
+
+
+
 @dataclass
 class Edge:
     to : str
@@ -211,10 +229,6 @@ class AdjacencyMatrixGraph(Graph):
                         g.add_edge(vertex_from,vertex_to, self.adj_matrix[i][j])
         return g
 
-    def depth_first_traverse(self, start = None):
-        if start is None:
-            start = self._vertices[0]
-
 
 if __name__ == "__main__":
 
@@ -232,7 +246,7 @@ if __name__ == "__main__":
     g.add_edge("A","B")
     g.add_edge("C","A")
     g.add_edge("D","C")
-    g.add_edge("C","B")
+    # g.add_edge("C","B")
     g.add_vertex("E")
     g.add_edge("E","B")
-    print(g.get_connected_vertices("B"))
+    print(g.depth_first_traverse())

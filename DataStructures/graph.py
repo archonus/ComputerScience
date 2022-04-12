@@ -99,6 +99,20 @@ class AdjacencyListGraph(Graph):
                 g.add_edge(vertex, edge.to, edge.weight)
         return g
 
+    def depth_first_traverse(self, start = None):
+        if start is None:
+            start = self.vertices[0]
+        visited = []
+        self._recursive_depth_first(start, visited)
+        return visited
+
+    def _recursive_depth_first(self, current, visited):
+        visited.append(current)
+        for edge in self.adj_list[current]: # Checks all the edges from the current node
+            if edge.to not in visited:
+                self._recursive_depth_first(edge.to, visited)
+
+
 
 class AdjacencyMatrixGraph(Graph):
     def __init__(self, vertices : List = None, adj_matrix = None, directed = True):
@@ -188,12 +202,11 @@ if __name__ == "__main__":
     # g.update_edge("A","B",2)
     # print(g.adj_list)
 
-    g = AdjacencyMatrixGraph(vertices=["A","B","C","D"], directed=False)
+    g = AdjacencyListGraph(vertices=["A","B","C","D"], directed=False)
     g.add_edge("A","B")
     g.add_edge("C","A")
     g.add_edge("D","C")
+    g.add_edge("C","B")
     g.add_vertex("E")
     g.add_edge("E","B")
-    print(g.adj_matrix)
-    print(g.to_adj_list(directed=False).adj_list)
-    print(g.to_adj_list().to_adj_matrix().adj_matrix)
+    print(g.depth_first_traverse())

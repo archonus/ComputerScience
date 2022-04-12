@@ -33,29 +33,34 @@ class Edge:
 class AdjacencyListGraph(Graph):
     # Actually uses a dictionary instead of list
 
-    def __init__(self, adj_list = None, vertices = None):
+    def __init__(self, adj_list = None, vertices = None, directed = True):
         if adj_list:
             self.adj_list = adj_list
         elif vertices: # Nodes defined, but no edges
             self.adj_list = {k : [] for k in vertices}
         else: # Empty graph
             self.adj_list = {}
+        self.directed = directed
     
     @property
     def vertices(self):
-        return list(self.adj_list)
+        return list(self.adj_list) # List of keys
 
     def add_vertex(self, name):
         if name not in self.adj_list:
             self.adj_list[name] = []
     
     def add_edge(self, vertex_from, vertex_to, weight = 1):
-        edges = self.adj_list[vertex_from]
+        self._add_edge(vertex_from,vertex_to,weight)
+        if not self.directed:
+            self._add_edge(vertex_to,vertex_from,weight) # Add an edge back again as well
+            
+    def _add_edge(self, vertex_from, vertex_to, weight):
         if self._get_edge(vertex_from,vertex_to):
             raise ValueError("Edge already exists")
         else:
             edge = Edge(vertex_to, weight)
-            edges.append(edge)
+            self.adj_list[vertex_from].append(edge)
 
     def _get_edge(self, vertex_from, vertex_to) -> Edge:
         edges = self.adj_list[vertex_from]
@@ -70,6 +75,12 @@ class AdjacencyListGraph(Graph):
             edge.weight = weight
         else:
             raise ValueError("Edge does not exist")
+        if not self.directed: # Change other way as well
+            edge = self._get_edge(vertext_to, vertex_from)
+            if edge: 
+                edge.weight = weight
+            else:
+                raise ValueError("Edge does not exist")
 
     def get_edge_weight(self, vertex_from, vertext_to):
         edge = self._get_edge(vertex_from,vertext_to)
@@ -144,12 +155,11 @@ class AdjacencyMatrixGraph(Graph):
                 else:
                     return index_to, index_from - index_to - 1
 
-
     def check_connected(self, vertex_from, vertex_to):
         return self.get_edge_weight(vertex_from,vertex_to) != 0
 
-    def to_adj_list(self) -> AdjacencyListGraph:
-        g = AdjacencyListGraph(vertices=self.vertices)
+    def to_adj_list(self, directed = True) -> AdjacencyListGraph:
+        g = AdjacencyListGraph(vertices=self.vertices, directed=directed)
         n = len(self.vertices)
         for i in range(n): # Iterate through all the vertices
             vertex_from = self.vertices[i]
@@ -178,12 +188,12 @@ if __name__ == "__main__":
     # g.update_edge("A","B",2)
     # print(g.adj_list)
 
-    g = AdjacencyMatrixGraph(vertices=["A","B","C","D"], directed=True)
+    g = AdjacencyMatrixGraph(vertices=["A","B","C","D"], directed=False)
     g.add_edge("A","B")
     g.add_edge("C","A")
     g.add_edge("D","C")
     g.add_vertex("E")
     g.add_edge("E","B")
     print(g.adj_matrix)
-    print(g.to_adj_list().adj_list)
+    print(g.to_adj_list(directed=False).adj_list)
     print(g.to_adj_list().to_adj_matrix().adj_matrix)

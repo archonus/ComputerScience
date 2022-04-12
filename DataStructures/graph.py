@@ -169,7 +169,7 @@ class AdjacencyMatrixGraph(Graph):
                         vertex_to = self.vertices[j]
                         g.add_edge(vertex_from,vertex_to, self.adj_matrix[i][j])
             else: # Undirected graph
-                for j in range(n - i): # Reduced number of iterations
+                for j in range(n - i - 1): # Reduced number of iterations
                     if self.adj_matrix[i][j] != 0:
                         vertex_to = self.vertices[i + j + 1]
                         g.add_edge(vertex_from,vertex_to, self.adj_matrix[i][j])

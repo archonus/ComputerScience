@@ -189,7 +189,11 @@ class AdjacencyMatrixGraph(Graph):
                     return index_to, index_from - index_to - 1
 
     def check_connected(self, vertex_from, vertex_to):
-        return self.get_edge_weight(vertex_from,vertex_to) != 0
+        try:
+            connected = self.get_edge_weight(vertex_from,vertex_to) != 0
+        except ValueError:
+            connected = False
+        return connected
 
     def to_adj_list(self, directed = True) -> AdjacencyListGraph:
         g = AdjacencyListGraph(vertices=self._vertices, directed=directed)
@@ -216,7 +220,8 @@ class AdjacencyMatrixGraph(Graph):
         connected = []
         n = len(self.vertices)
         for i in range(n):
-            vertex_from = self.vertices[i]
+            vertex_from = self._vertices[i]
+            
         return connected
 
 

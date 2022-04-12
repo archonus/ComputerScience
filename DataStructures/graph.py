@@ -2,6 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import deque
 from dataclasses import dataclass
+from math import inf
 from typing import List
 
 class Graph(ABC):
@@ -71,6 +72,29 @@ class Graph(ABC):
 
         return visited
 
+    def djikstra(self, start= None):
+        if start is None:
+            start = self.vertices[0]
+        distances = {v : inf for v in self.vertices}
+        back = {v : "" for v in self.vertices}
+        distances[start] = 0
+        visited = []
+        queue = []
+        queue.append(start)
+        while len(queue) > 0:
+            queue.sort(key= lambda v : distances[v])
+            current = queue.pop(0) # Remove first item
+            if current not in visited:
+                visited.append(current)
+            for v in self.get_connected_vertices(current):
+                if v not in visited:
+                    queue.append(v)
+                    new_distance = distances[current] + self.get_edge_weight(current, v) # Check distance
+                    if new_distance < distances[v]:
+                        distances[v] = new_distance
+                        back[v] = current # The new shortest distance and how to get there
+
+        return distances, back
 
 
 
@@ -259,12 +283,13 @@ if __name__ == "__main__":
     # g.update_edge("A","B",2)
     # print(g.adj_list)
 
-    g = AdjacencyMatrixGraph(vertices=["A","B","C","D","E","F","G"], directed=False)
-    g.add_edge("A","B")
-    g.add_edge("A","D")
-    g.add_edge("A","E")
-    g.add_edge("B","D")
-    g.add_edge("B","C")
-    g.add_edge("C","G")
-    g.add_edge("F","D")
-    print(g.depth_first_traverse())
+    g = AdjacencyMatrixGraph(vertices=["A","B","C","D","E"], directed=False)
+    g.add_edge("A","B",7)
+    g.add_edge("A","D",3)
+    g.add_edge("B","D",2)
+    g.add_edge("B","C",3)
+    g.add_edge("C","E",1)
+    g.add_edge("C","D",4)
+    g.add_edge("E","D",7)
+    g.add_edge("B","E",6)
+    print(g.djikstra())

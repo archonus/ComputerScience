@@ -1,5 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from collections import deque
 from dataclasses import dataclass
 from typing import List
 
@@ -42,16 +43,31 @@ class Graph(ABC):
     def depth_first_traverse(self, start = None):
         if start is None:
             start = self.vertices[0]
-        visited = []
+        visited = [] # Should use set?
         stack = [start]
         while len(stack) > 0:
             current = stack.pop()
-            if current not in visited:
-                visited.append(current)
+            visited.append(current)
             for node in self.get_connected_vertices(current):
                 if node not in visited:
                     stack.append(node)
         
+        return visited
+
+    def breadth_first_traverse(self, start = None):
+        if start is None:
+            start = self.vertices[0]
+        visited = []
+        queue = deque()
+        queue.append(start)
+        while len(queue) > 0:
+            current = queue.popleft()
+            if current not in visited:
+                visited.append(current)
+            for node in self.get_connected_vertices(current):
+                if node not in visited:
+                    queue.append(node)
+
         return visited
 
 
@@ -242,11 +258,12 @@ if __name__ == "__main__":
     # g.update_edge("A","B",2)
     # print(g.adj_list)
 
-    g = AdjacencyMatrixGraph(vertices=["A","B","C","D"], directed=False)
+    g = AdjacencyMatrixGraph(vertices=["A","B","C","D","E","F","G"], directed=False)
     g.add_edge("A","B")
-    g.add_edge("C","A")
-    g.add_edge("D","C")
-    # g.add_edge("C","B")
-    g.add_vertex("E")
-    g.add_edge("E","B")
-    print(g.depth_first_traverse())
+    g.add_edge("A","D")
+    g.add_edge("A","E")
+    g.add_edge("B","D")
+    g.add_edge("B","C")
+    g.add_edge("C","G")
+    g.add_edge("F","D")
+    print(g.breadth_first_traverse())

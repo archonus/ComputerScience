@@ -47,7 +47,8 @@ class Graph(ABC):
         stack = [start]
         while len(stack) > 0:
             current = stack.pop()
-            visited.append(current)
+            if current not in visited:
+                visited.append(current)
             for node in self.get_connected_vertices(current):
                 if node not in visited:
                     stack.append(node)
@@ -266,4 +267,4 @@ if __name__ == "__main__":
     g.add_edge("B","C")
     g.add_edge("C","G")
     g.add_edge("F","D")
-    print(g.breadth_first_traverse())
+    print(g.depth_first_traverse())

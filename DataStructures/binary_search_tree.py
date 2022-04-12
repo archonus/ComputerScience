@@ -2,16 +2,16 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, List, Tuple
 
+@dataclass
+class Node:
+    """A node in a binary search tree"""
+    key : Any
+    data : Any
+    left : Node = None
+    right : Node = None
 
 class BinarySearchTree:
     """Class representing a binary search tree"""
-    @dataclass
-    class Node:
-        """A node in a binary search tree"""
-        key : Any
-        data : Any
-        left : BinarySearchTree.Node = None
-        right : BinarySearchTree.Node = None
 
     def __init__(self, data: List[Tuple] = None):
         self.root = None
@@ -27,7 +27,7 @@ class BinarySearchTree:
         return self.retrieve(key)
 
     def insert(self, key, value):
-        node = BinarySearchTree.Node(key, value)
+        node = Node(key, value)
         self._count += 1
         if self.root is None:
             self.root = node

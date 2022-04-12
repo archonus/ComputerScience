@@ -25,12 +25,13 @@ class Graph(ABC):
     def check_connected(self, vertex_from, vertex_to):
         pass
 
+@dataclass
+class Edge:
+    to : str
+    weight : int = 1
+
 class AdjacencyListGraph(Graph):
     # Actually uses a dictionary instead of list
-    @dataclass
-    class Edge:
-        to : str
-        weight : int = 1
 
     def __init__(self, adj_list = None, vertices = None):
         if adj_list:
@@ -53,10 +54,10 @@ class AdjacencyListGraph(Graph):
         if self._get_edge(vertex_from,vertex_to):
             raise ValueError("Edge already exists")
         else:
-            edge = AdjacencyListGraph.Edge(vertex_to, weight)
+            edge = Edge(vertex_to, weight)
             edges.append(edge)
 
-    def _get_edge(self, vertex_from, vertex_to):
+    def _get_edge(self, vertex_from, vertex_to) -> Edge:
         edges = self.adj_list[vertex_from]
         for edge in edges:
             if edge.to == vertex_to:

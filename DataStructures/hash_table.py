@@ -2,16 +2,15 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+@dataclass
+class HashTableItem:
+    """Class representing an item in the hash table"""
+    key : Any
+    value : Any
+    next : HashTableItem = None
 
 class HashTable:
     INITIAL_CAPACITY = 8  # The intitial capacity of the hash table. Should implement resizing
-
-    @dataclass
-    class HashTableItem:
-        """Class representing an item in the hash table"""
-        key : Any
-        value : Any
-        next : HashTable.HashTableItem = None
 
     def __init__(self, initial_data=None):
         # The list is initialised to all None
@@ -43,7 +42,7 @@ class HashTable:
         # Hash the key and find the index
         return hash(key) % self.capacity
     
-    def _find_item(self, key):
+    def _find_item(self, key) -> HashTableItem:
         """Find the HashTableItem from the key. Raises KeyError if cannot find"""
         index = self._get_index(key)
         if self._buckets[index] is None:  # If the bucket is empty
@@ -68,7 +67,7 @@ class HashTable:
 
     def insert(self, key, value):
         """Insert an item into the hash table"""
-        item = HashTable.HashTableItem(key, value)
+        item = HashTableItem(key, value)
         index = self._get_index(key)
         if(self._buckets[index] is None):  # The bucket is empty
             self._buckets[index] = item

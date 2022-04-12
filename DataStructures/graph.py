@@ -5,6 +5,11 @@ from typing import List
 
 class Graph(ABC):
 
+    @property
+    @abstractmethod
+    def vertices(self):
+        pass
+
     @abstractmethod
     def add_edge(self, vertex_from, vertex_to,weight):
         pass
@@ -14,7 +19,7 @@ class Graph(ABC):
         pass
     
     @abstractmethod
-    def update_edge(self,vertex_from, vertext_to, weight):
+    def update_edge(self,vertex_from, vertex_to, weight):
         pass
 
     @abstractmethod
@@ -23,6 +28,10 @@ class Graph(ABC):
 
     @abstractmethod
     def check_connected(self, vertex_from, vertex_to):
+        pass
+
+    @abstractmethod
+    def get_connected_vertices(self, vertex) -> List:
         pass
 
 @dataclass
@@ -82,8 +91,8 @@ class AdjacencyListGraph(Graph):
             else:
                 raise ValueError("Edge does not exist")
 
-    def get_edge_weight(self, vertex_from, vertext_to):
-        edge = self._get_edge(vertex_from,vertext_to)
+    def get_edge_weight(self, vertex_from, vertex_to):
+        edge = self._get_edge(vertex_from,vertex_to)
         if edge: 
             return edge.weight
         else: 
@@ -112,12 +121,18 @@ class AdjacencyListGraph(Graph):
             if edge.to not in visited:
                 self._recursive_depth_first(edge.to, visited)
 
+    def get_connected_vertices(self, vertex) -> List:
+        connected = []
+        for edge in self.adj_list[vertex]:
+            connected.append(edge.to)
+        return connected
+
 
 
 class AdjacencyMatrixGraph(Graph):
     def __init__(self, vertices : List = None, adj_matrix = None, directed = True):
-        self.vertices = vertices[:] if vertices else [] # Should really be a deep copy
-        n = len(self.vertices)
+        self._vertices = vertices[:] if vertices else [] # Should really be a deep copy
+        n = len(self._vertices)
         self.directed = directed
         if adj_matrix is not None:
             self.adj_matrix = adj_matrix
@@ -128,18 +143,22 @@ class AdjacencyMatrixGraph(Graph):
                 self.adj_matrix = []
             else:
                 self.adj_matrix = [[0 for i in range(n - j - 1)] for j in range(n)]
+
+    @property
+    def vertices(self):
+        return self._vertices
     
     def add_edge(self, vertex_from, vertex_to, weight = 1):
         self.update_edge(vertex_from,vertex_to,weight)
 
     def add_vertex(self,name):
-        if name in self.vertices:
+        if name in self._vertices:
             raise ValueError("Vertex already exists")
-        self.vertices.append(name)
+        self._vertices.append(name)
         for row in self.adj_matrix:
             row.append(0) # Add another entry to each row (add a column) 
         if self.directed:  
-            self.adj_matrix.append([0 for i in range(len(self.vertices))])
+            self.adj_matrix.append([0 for i in range(len(self._vertices))])
         else:
             self.adj_matrix.append([])
 
@@ -157,8 +176,8 @@ class AdjacencyMatrixGraph(Graph):
 
     def _get_edge_indices(self, vertex_from, vertex_to):
             """Returns a tuple identifying the edge between vertex_from and vertex_to"""
-            index_from = self.vertices.index(vertex_from)
-            index_to = self.vertices.index(vertex_to)
+            index_from = self._vertices.index(vertex_from)
+            index_to = self._vertices.index(vertex_to)
             if self.directed:
                 return index_from, index_to
             else:
@@ -173,21 +192,32 @@ class AdjacencyMatrixGraph(Graph):
         return self.get_edge_weight(vertex_from,vertex_to) != 0
 
     def to_adj_list(self, directed = True) -> AdjacencyListGraph:
-        g = AdjacencyListGraph(vertices=self.vertices, directed=directed)
-        n = len(self.vertices)
+        g = AdjacencyListGraph(vertices=self._vertices, directed=directed)
+        n = len(self._vertices)
         for i in range(n): # Iterate through all the vertices
-            vertex_from = self.vertices[i]
+            vertex_from = self._vertices[i]
             if self.directed:
                 for j in range(n):
                     if self.adj_matrix[i][j] != 0:
-                        vertex_to = self.vertices[j]
+                        vertex_to = self._vertices[j]
                         g.add_edge(vertex_from,vertex_to, self.adj_matrix[i][j])
             else: # Undirected graph
                 for j in range(n - i - 1): # Reduced number of iterations
                     if self.adj_matrix[i][j] != 0:
-                        vertex_to = self.vertices[i + j + 1]
+                        vertex_to = self._vertices[i + j + 1]
                         g.add_edge(vertex_from,vertex_to, self.adj_matrix[i][j])
         return g
+
+    def depth_first_traverse(self, start = None):
+        if start is None:
+            start = self._vertices[0]
+
+    def get_connected_vertices(self, vertex) -> List:
+        connected = []
+        n = len(self.vertices)
+        for i in range(n):
+            vertex_from = self.vertices[i]
+        return connected
 
 
 if __name__ == "__main__":
@@ -209,4 +239,4 @@ if __name__ == "__main__":
     g.add_edge("C","B")
     g.add_vertex("E")
     g.add_edge("E","B")
-    print(g.depth_first_traverse())
+    print(g.get_connected_vertices("B"))

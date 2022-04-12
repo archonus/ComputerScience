@@ -30,9 +30,14 @@ class Graph(ABC):
     def check_connected(self, vertex_from, vertex_to):
         pass
 
-    @abstractmethod
     def get_connected_vertices(self, vertex) -> List:
-        pass
+        connected = []
+        n = len(self.vertices)
+        for i in range(n):
+            vertex_to = self.vertices[i]
+            if self.check_connected(vertex,vertex_to):
+                connected.append(vertex_to)            
+        return connected
 
 @dataclass
 class Edge:
@@ -120,12 +125,6 @@ class AdjacencyListGraph(Graph):
         for edge in self.adj_list[current]: # Checks all the edges from the current node
             if edge.to not in visited:
                 self._recursive_depth_first(edge.to, visited)
-
-    def get_connected_vertices(self, vertex) -> List:
-        connected = []
-        for edge in self.adj_list[vertex]:
-            connected.append(edge.to)
-        return connected
 
 
 
@@ -216,14 +215,6 @@ class AdjacencyMatrixGraph(Graph):
         if start is None:
             start = self._vertices[0]
 
-    def get_connected_vertices(self, vertex) -> List:
-        connected = []
-        n = len(self.vertices)
-        for i in range(n):
-            vertex_from = self._vertices[i]
-            
-        return connected
-
 
 if __name__ == "__main__":
 
@@ -237,7 +228,7 @@ if __name__ == "__main__":
     # g.update_edge("A","B",2)
     # print(g.adj_list)
 
-    g = AdjacencyListGraph(vertices=["A","B","C","D"], directed=False)
+    g = AdjacencyMatrixGraph(vertices=["A","B","C","D"], directed=False)
     g.add_edge("A","B")
     g.add_edge("C","A")
     g.add_edge("D","C")

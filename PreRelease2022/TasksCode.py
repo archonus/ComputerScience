@@ -3,6 +3,7 @@
 # written by the AQA Programmer Team
 # developed in the Python 3.9 programming environment
 
+from fileinput import filename
 import random
 import os
 
@@ -45,7 +46,7 @@ class Breakthrough():
                         print(self.__Discard.GetCardDisplay())
 #region Task 12
                     elif MenuChoice == "S":
-                        pass
+                        self.SaveGame()
 #endregion Task 12
                     elif MenuChoice == "U":
                         self.__CardsPlayed += 1
@@ -65,7 +66,21 @@ class Breakthrough():
 
 #region Task 12
     def SaveGame(self):
-        pass
+        filename = input("Enter the file to save...")
+        if filename is None or filename == "":
+            filename = "savingTest.txt"
+        with open(filename,mode="w") as f:
+            lines = []
+            lines.append(str(self.__Score))
+            lines.append(self.__CurrentLock.GetChallengesAsString())
+            lines.append(self.__CurrentLock.GetChallengesMetAsString())
+            lines.append(self.__Hand.GetCollectionString())
+            lines.append(self.__Sequence.GetCollectionString())
+            lines.append(self.__Discard.GetCollectionString())
+            lines.append(self.__Deck.GetCollectionString())
+            for line in lines:
+                f.write(line)
+                f.write("\n")
 #endregion Task 12
 
     def __ProcessLockSolved(self):
@@ -154,7 +169,7 @@ class Breakthrough():
     
     def __LoadGame(self, FileName):
         try:
-            with open(FileName) as f:          
+            with open(FileName) as f:
                 LineFromFile = f.readline().rstrip()
                 self.__Score = int(LineFromFile)
                 LineFromFile = f.readline().rstrip()
@@ -229,7 +244,7 @@ class Breakthrough():
 
     def __GetChoice(self):
         print()
-        Choice = input("(D)iscard inspect, (U)se card:> ").upper()
+        Choice = input("(D)iscard inspect, (U)se card, (S)ave:> ").upper()
         return Choice
     
     def __AddDifficultyCardsToDeck(self):
@@ -291,7 +306,21 @@ class Challenge():
 class Lock():
     def __init__(self):
         self._Challenges = []
-        
+#region Task 12        
+    def GetChallengesAsString(self):
+        conditions_strings = []
+        for challenge in self._Challenges:
+            cond_string = str.join(",", challenge.GetCondition())
+            conditions_strings.append(cond_string)
+        return str.join(";",conditions_strings)
+
+    def GetChallengesMetAsString(self):
+        values = []
+        for c in self._Challenges:
+            values.append("Y" if c.GetMet() else "N")
+        return str.join(";",values)
+#endregion
+    
     def AddChallenge(self, Condition):
         C = Challenge()
         C.SetCondition(Condition)
@@ -362,7 +391,7 @@ class Card():
 
 class ToolCard(Card):
     def __init__(self, *args):
-        self._ToolType = args[0]   
+        self._ToolType = args[0]
         self._Kit = args[1]
         if len(args) == 2:
             super(ToolCard, self).__init__()
@@ -418,7 +447,13 @@ class CardCollection():
     def __init__(self, N):
         self._Name = N
         self._Cards = []
-
+#region Task 12
+    def GetCollectionString(self):
+        card_descriptions = []
+        for card in self._Cards:
+            card_descriptions.append(f"{card.GetDescription()} {card.GetCardNumber()}")
+        return str.join(",", card_descriptions)
+#endregion
     def GetName(self):
         return self._Name
 

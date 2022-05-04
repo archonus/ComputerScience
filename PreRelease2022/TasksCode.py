@@ -2,8 +2,6 @@
 # this code should be used in conjunction with the Preliminary Material
 # written by the AQA Programmer Team
 # developed in the Python 3.9 programming environment
-
-from fileinput import filename
 import random
 import os
 
@@ -123,6 +121,10 @@ class Breakthrough():
             if self.__Hand.GetCardDescriptionAt(CardChoice - 1)[0] != self.__Sequence.GetCardDescriptionAt(self.__Sequence.GetNumberOfCards() - 1)[0]:
                 self.__Score += self.__MoveCard(self.__Hand, self.__Sequence, self.__Hand.GetCardNumberAt(CardChoice - 1))
                 self.__GetCardFromDeck(CardChoice)
+#region Task 3
+            else:
+                print("Cannot play two cards of the same tool type")
+#endregion
         else:
             self.__Score += self.__MoveCard(self.__Hand, self.__Sequence, self.__Hand.GetCardNumberAt(CardChoice - 1))
             self.__GetCardFromDeck(CardChoice)

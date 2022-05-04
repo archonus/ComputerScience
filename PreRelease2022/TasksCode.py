@@ -83,15 +83,19 @@ class Breakthrough():
 
     def __ProcessLockSolved(self):
         self.__Score += 10
-        # Task 9
+        #region Task 9
         if self.__CardsPlayed < 20:
             bonus = 20 - self.__CardsPlayed
             self.__Score += bonus
             print(f"Bonus of {bonus} received")
-        # End Task 9
+        #endregion Task 9
         print("Lock has been solved.  Your score is now:", self.__Score)
         while self.__Discard.GetNumberOfCards() > 0:
             self.__MoveCard(self.__Discard, self.__Deck, self.__Discard.GetCardNumberAt(0))
+        #region Task 7
+        for t in ["P","F","K"]:
+            self.__Deck.AddCard(ToolCard(t,"m"))
+        #endregion
         self.__Deck.Shuffle()
         self.__CurrentLock = self.__GetRandomLock()
 
@@ -119,6 +123,11 @@ class Breakthrough():
     def __PlayCardToSequence(self, CardChoice):
         if self.__Sequence.GetNumberOfCards() > 0:
             if self.__Hand.GetCardDescriptionAt(CardChoice - 1)[0] != self.__Sequence.GetCardDescriptionAt(self.__Sequence.GetNumberOfCards() - 1)[0]:
+                #region Task 7
+                if self.__Hand.GetCardDescriptionAt(CardChoice - 1)[2] == "m":
+                    kit = input("Please enter which kit the card should be played as...")
+                    self.__Hand.GetCardAt(CardChoice - 1).SetToolKit(kit)
+                #endregion
                 self.__Score += self.__MoveCard(self.__Hand, self.__Sequence, self.__Hand.GetCardNumberAt(CardChoice - 1))
                 self.__GetCardFromDeck(CardChoice)
 #region Task 3
@@ -274,6 +283,11 @@ class Breakthrough():
             self.__Deck.AddCard(NewCard)
             NewCard = ToolCard("K", "c")
             self.__Deck.AddCard(NewCard)
+        #region Task 7
+        for tool in ["P","F","K"]:
+            NewCard = ToolCard(tool, "m")
+        #endregion
+
     
     def __MoveCard(self, FromCollection, ToCollection, CardNumber):
         Score  = 0
@@ -400,6 +414,11 @@ class ToolCard(Card):
         elif len(args) == 3:
             self._CardNumber = args[2]
         self.__SetScore()
+
+    #region Task 7
+    def SetToolKit(self, kit):
+        self._Kit = kit
+    #endregion
         
     def __SetScore(self):
         if self._ToolType == "K":
@@ -456,6 +475,12 @@ class CardCollection():
             card_descriptions.append(f"{card.GetDescription()} {card.GetCardNumber()}")
         return str.join(",", card_descriptions)
 #endregion
+    
+    #region Task 7
+    def GetCardAt(self, X) -> Card:
+        return self._Cards[X]
+    #endregion
+    
     def GetName(self):
         return self._Name
 

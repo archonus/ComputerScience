@@ -283,12 +283,12 @@ class Breakthrough():
             self.__Deck.AddCard(NewCard)
             NewCard = ToolCard("K", "c")
             self.__Deck.AddCard(NewCard)
-        #region Task 7
+#region Task 7
         for tool in ["P","F","K"]:
             NewCard = ToolCard(tool, "m")
-        #endregion
+#endregion
 
-    
+
     def __MoveCard(self, FromCollection, ToCollection, CardNumber):
         Score  = 0
         if FromCollection.GetName() == "HAND" and ToCollection.GetName() == "SEQUENCE":
@@ -301,6 +301,13 @@ class Breakthrough():
             if CardToMove is not None:
                 ToCollection.AddCard(CardToMove)
         return Score
+
+#region Task 10
+    def _AddGeniusCardToDeck(self):
+        if random.randint(1,4) == 1:
+            self.__Deck.AddCard(GeniusCard())
+            
+#endregion
 
 class Challenge():
     def __init__(self):
@@ -463,6 +470,13 @@ class DifficultyCard(Card):
             CardToMove = Deck.RemoveCard(Deck.GetCardNumberAt(0))
             Discard.AddCard(CardToMove)
             Count += 1
+
+#region Task 10
+class GeniusCard(Card):
+    def __init__(self):
+        super(GeniusCard,self).__init__()
+#endregion
+
 
 class CardCollection():
     def __init__(self, N):

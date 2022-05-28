@@ -325,13 +325,37 @@ def ReadItem(Items, ItemToRead, CurrentLocation):
     if SubCommand == "say":
       Say(SubCommandParameter)
       
+#Q12
+def DropItem(Items, ItemToDrop, CurrentLocation):
+  IndexOfItem = GetIndexOfItem(ItemToDrop, -1, Items)
+  if IndexOfItem == -1:
+    print("You can't find " + ItemToDrop +".")
+    return
+  Item = Items[IndexOfItem]
+  if Item.Location != INVENTORY:
+    print(ItemToDrop +" not in inventory.")
+  elif "fragile" in Item.Status:
+    Item.Location = 0
+    print("Item broke when dropped")
+  else:
+    Item.Location = CurrentLocation
+    print("Item dropped")
+
+
+
 def GetItem(Items, ItemToGet, CurrentLocation):
   SubCommand = ""
   SubCommandParameter = ""
   CanGet = False
   IndexOfItem = GetIndexOfItem(ItemToGet, -1, Items)
+  num_items = 0
+  for Thing in Items:
+    if Thing.Location == INVENTORY: # Count the number of items in the inventory
+      num_items += 1
   if IndexOfItem == -1:
     print("You can't find " + ItemToGet + ".")
+  elif num_items >= 5:
+    print("You cannot carry more than five items")
   elif Items[IndexOfItem].Location == INVENTORY:
     print("You have already got that!")
   elif not "get" in Items[IndexOfItem].Commands:
@@ -419,18 +443,35 @@ def TakeRandomItemFromPlayer(Items, OtherCharacterID):
 def PlayDiceGame(Characters, Items, OtherCharacterName):
   PlayerScore = 0
   OtherCharacterScore = 0
+  player_rolls = []
   DiceGamePossible, IndexOfPlayerDie, IndexOfOtherCharacter, IndexOfOtherCharacterDie = CheckIfDiceGamePossible(Items, Characters, OtherCharacterName)
   if not DiceGamePossible:
     print("You can't play a dice game.")
   else:
-    Position = GetPositionOfCommand(Items[IndexOfPlayerDie].Commands, "use")
-    ResultForCommand = GetResultForCommand(Items[IndexOfPlayerDie].Results, Position)
-    PlayerScore = RollDie(ResultForCommand[5], ResultForCommand[7])
-    print("You rolled a " + str(PlayerScore) + ".")
-    Position = GetPositionOfCommand(Items[IndexOfOtherCharacterDie].Commands, "use")
-    ResultForCommand = GetResultForCommand(Items[IndexOfOtherCharacterDie].Results, Position)
-    OtherCharacterScore = RollDie(ResultForCommand[5], ResultForCommand[7])
-    print("They rolled a " + str(OtherCharacterScore) + ".")
+
+    #Q13
+    for i in range(3): # Repeat three times
+      Position = GetPositionOfCommand(Items[IndexOfPlayerDie].Commands, "use")
+      ResultForCommand = GetResultForCommand(Items[IndexOfPlayerDie].Results, Position)
+      roll = RollDie(ResultForCommand[5], ResultForCommand[7])
+      print("You rolled a " + str(roll) + ".")
+      player_rolls.append(roll)
+
+      Position = GetPositionOfCommand(Items[IndexOfOtherCharacterDie].Commands, "use")
+      ResultForCommand = GetResultForCommand(Items[IndexOfOtherCharacterDie].Results, Position)
+      other_roll = RollDie(ResultForCommand[5], ResultForCommand[7])
+      print("They rolled a " + str(other_roll) + ".")
+      OtherCharacterScore += other_roll * 10 ** i # Increment score
+    
+    max_roll = max(player_rolls)
+    min_roll = min(player_rolls)
+    player_rolls.remove(max_roll)
+    player_rolls.remove(min_roll)
+    mid = player_rolls[0] # Only 1 item left
+    PlayerScore = max_roll * 100 + mid * 10 + min_roll
+    print(f"Your score is {PlayerScore}")
+    print(f"Their score is {OtherCharacterScore}")
+    #/Q13
     if PlayerScore > OtherCharacterScore:
       print("You win!")
       Items = TakeItemFromOtherCharacter(Items, Characters[IndexOfOtherCharacter].ID)
@@ -509,6 +550,10 @@ def PlayGame(Characters, Items, Places):
       StopGame, Items = GetItem(Items, Instruction, Characters[0].CurrentLocation)
     elif Command == "use":
       StopGame, Items = UseItem(Items, Instruction, Characters[0].CurrentLocation, Places)
+    #Q12
+    elif Command == "drop":
+      DropItem(Items,Instruction, Characters[0].CurrentLocation)
+    #/Q12
     elif Command == "go":
       Characters[0], Moved = Go(Characters[0], Instruction, Places[Characters[0].CurrentLocation - 1])
     elif Command == "read":
@@ -531,7 +576,11 @@ def PlayGame(Characters, Items, Places):
       Say("You decide to give up, try again another time.")
       StopGame = True
     else:
-      print("Sorry, you don't know how to " + Command + ".")
+      randnum = random.randint(0,1)
+      if randnum == 0:
+        print("Sorry, you don't know how to " + Command + ".")
+      else:
+        print("Sorry, I don't know what " + Command + " means.")
   input()
 
 def LoadGame(Filename, Characters, Items, Places):

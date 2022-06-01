@@ -11,6 +11,11 @@ def GetRowColumn():
   print()
   Column = int(input("Please enter column: "))
   Row = int(input("Please enter row: "))
+  #Q9
+  while Row < 0 or Row > 9:
+    print("Invalid value entered")
+    Row = int(input("Please enter row: "))
+  #\Q9
   print()
   return Row, Column
             
@@ -23,8 +28,37 @@ def MakePlayerMove(Board, Ships):
     Board[Row][Column] = "m"
   else:
     print("Hit at (" + str(Column) + "," + str(Row) + ").")
+    #Q10
+    CheckSunk(Board,Ships,Row,Column)
+    #\Q10
     Board[Row][Column] = "h"
-        
+
+#Q11
+def MakePlayerTorpedoMove(Board, Ships):
+  Row, Column = GetRowColumn()
+  while Board[Row][Column] in ['m','-']:
+    Board[Row][Column] = 'm'
+    Row -= 1
+    if Row < 0:
+      print("Torpedo moved off board")
+      return # Exit subroutine
+  print("Hit at (" + str(Column) + "," + str(Row) + ").")
+  #Q10
+  CheckSunk(Board,Ships,Row,Column)
+  #\Q10
+  Board[Row][Column] = "h"
+#\Q11
+
+#Q10 
+def CheckSunk(Board, Ships, Row, Column):
+  first_char = Board[Row][Column]
+  for i in range(len(Ships)):
+    if first_char == Ships[i][0][0]:
+      Ships[i][1] -= 1
+      if Ships[i][1] == 0:
+        print(f"{Ships[i][0]} is sunk!")
+#\Q10
+
 def SetUpBoard():
   Board = []
   for Row in range(10):
@@ -125,9 +159,20 @@ def GetMainMenuChoice():
 
 def PlayGame(Board, Ships):
   GameWon = False
+  UsedTorpedo = False
   while not GameWon:
     PrintBoard(Board)
-    MakePlayerMove(Board, Ships)
+    #Q11
+    if not UsedTorpedo:
+      torpedo = input("Fire a torpedo (Y/N)...") == "Y"
+      if torpedo:
+        MakePlayerTorpedoMove(Board,Ships)
+        UsedTorpedo = True
+      else:
+        MakePlayerMove(Board, Ships)
+    else:
+      MakePlayerMove(Board,Ships)
+    #\Q11
     GameWon = CheckWin(Board)
     if GameWon:
       print("All ships sunk!")

@@ -94,6 +94,21 @@ class PBDSPiece(Piece):
     else:
       return 5
 
+class RangerPiece(Piece):
+  def __init__(self, Player1):
+    super(RangerPiece,self).__init__(Player1)
+    self._PieceType = "R"
+  
+  def CheckMoveIsValid(self, DistanceBetweenTiles, StartTerrain, EndTerrain):
+    normal = super().CheckMoveIsValid(DistanceBetweenTiles, StartTerrain, EndTerrain)
+    if normal != -1:
+      return normal
+    elif StartTerrain == '#' and EndTerrain == '#':
+      return 1
+    else:
+      return -1
+
+
 class Tile:
   def __init__(self, xcoord, ycoord, zcoord):
     self._x = xcoord
@@ -143,6 +158,20 @@ class HexGrid:
     self.__SetUpTiles()
     self.__SetUpNeighbours()
 
+  #Q15
+  def GetFogOfWar(self,ID):
+    for Tile in self._Tiles: # Effectively iterating through all the pieces
+      piece = Tile.GetPieceInTile()
+      if piece is not None:
+        if piece.GetBelongsToPlayer1() == self._Player1Turn:
+          Distance = self._Tiles[ID].GetDistanceToTileT(Tile) # Distance between the piece and tile at ID
+          if Distance <= 2:
+            return False # Not hidden
+    return True
+
+  #/Q15
+  
+  
   def SetUpGridTerrain(self, ListOfTerrain):
     for Count in range (0, len(ListOfTerrain)):
       self._Tiles[Count].SetTerrain(ListOfTerrain[Count])
@@ -154,6 +183,8 @@ class HexGrid:
       NewPiece = LESSPiece(BelongsToPlayer1)
     elif TypeOfPiece == "PBDS":
       NewPiece = PBDSPiece(BelongsToPlayer1)
+    elif TypeOfPiece == "Ranger":
+      NewPiece = RangerPiece(BelongsToPlayer1)
     else:
       NewPiece = Piece(BelongsToPlayer1)
     self._Pieces.append(NewPiece)
@@ -168,6 +199,15 @@ class HexGrid:
       if FuelCost < 0:
         return "That move can't be done", FuelChange, LumberChange, SupplyChange
       FuelChange = -FuelCost
+# Q14
+    elif Items[0] == "burn":
+      if LumberAvailable <= 0:
+        return "Cannot burn lumber",FuelChange, LumberChange, SupplyChange
+      else:
+        randnum = random.randint(1,LumberAvailable)
+        LumberChange = -randnum
+        FuelChange = randnum
+#/Q14
     elif Items[0] in ["saw", "dig"]:
       Success, FuelChange, LumberChange = self.__ExecuteCommandInTile(Items)
       if not Success:
@@ -322,6 +362,12 @@ class HexGrid:
             Player2VPs += ThePiece.GetVPs()
           else:
             Player1VPs += ThePiece.GetVPs()
+        else:
+          if ThePiece.GetPieceType().upper() == "L":
+            if ThePiece.GetBelongsToPlayer1():
+              Player1VPs += 1
+            else:
+              Player2VPs += 1
     for T in ListOfTilesContainingDestroyedPieces:
       T.SetPiece(None)
     return BaronDestroyed, Player1VPs, Player2VPs
@@ -347,6 +393,8 @@ class HexGrid:
     ThePiece = self._Tiles[ID].GetPieceInTile()
     if ThePiece is None:
       return " "
+    elif self.GetFogOfWar(ID):
+      return " " # Hidden
     else:
       return ThePiece.GetPieceType()
 
@@ -486,7 +534,7 @@ def SetUpDefaultGame():
   Player2 = Player("Player Two", 1, 10, 10, 5)
   Grid.SetUpGridTerrain(T)
   Grid.AddPiece(True, "Baron", 0)
-  Grid.AddPiece(True, "Serf", 8)
+  Grid.AddPiece(True, "Ranger", 8) # Q13
   Grid.AddPiece(False, "Baron", 31)
   Grid.AddPiece(False, "Serf", 23)
   return Player1, Player2, Grid
@@ -529,6 +577,8 @@ def CheckCommandIsValid(Items):
       return CheckStandardCommandFormat(Items)
     elif Items[0] == "upgrade":
       return CheckUpgradeCommandFormat(Items)
+    elif Items[0] == "burn": #Q14
+      return True
   return False
 
 def PlayGame(Player1, Player2, Grid):

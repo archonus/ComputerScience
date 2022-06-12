@@ -29,7 +29,7 @@ class Household:
   def GetY(self):
     return self._YCoord
 
-class Settlement:  # Superclass
+class Settlement:
   def __init__(self):
     self._XSize = 1000
     self._YSize = 1000
@@ -77,7 +77,7 @@ class Settlement:  # Superclass
     else:
       return False, X, Y
 
-class LargeSettlement(Settlement): # Subclass (Inheritance from the superclass Settlement)
+class LargeSettlement(Settlement):
   def __init__(self, ExtraXSize, ExtraYSize, ExtraHouseholds):
     super(LargeSettlement, self).__init__()
     self._XSize += ExtraXSize
@@ -481,37 +481,7 @@ class Simulation:
     for C in self._Companies:
       print(C.GetDetails() + "\n")
     print()
-
-# Run subroutine (original code)
-
-#  def Run(self):
-#    Choice = ""
-#    while Choice != "Q":
-#      self.DisplayMenu()
-#      Choice = input()
-#      if Choice == "1":
-#        self._SimulationSettlement.DisplayHouseholds()
-#      elif Choice == "2":
-#        self.DisplayCompanies()
-#      elif Choice == "3":
-#        Index = -1
-#        while Index == -1:
-#          CompanyName = input("Enter company name: ")
-#          Index = self.GetIndexOfCompany(CompanyName)
-#        self.ModifyCompany(Index)
-#      elif Choice == "4":
-#        self.AddCompany()
-#
-# the problem is here . Need to add a new option for remove company
-#
-#      elif Choice == "6":
-#        self.ProcessDayEnd()
-#      elif Choice == "Q":
-#        print("Simulation finished, press Enter to close.")
-#        input()
-#
-# Changes to add a new option for remove company in Run Subroutine
-# Run subroutine (altered  code)
+        
   def Run(self):
     Choice = ""
     while Choice != "Q":
@@ -529,16 +499,11 @@ class Simulation:
         self.ModifyCompany(Index)
       elif Choice == "4":
         self.AddCompany()
-      elif Choice == "5":
-        CompanyName = input("what company would you like to delete: ")
-        del(self._Companies[self.GetIndexOfCompany(CompanyName)])
       elif Choice == "6":
         self.ProcessDayEnd()
       elif Choice == "Q":
         print("Simulation finished, press Enter to close.")
         input()
-
-# Finish editing here - by Sir Graham Balfour
 
 def Main():
   ThisSim = Simulation()

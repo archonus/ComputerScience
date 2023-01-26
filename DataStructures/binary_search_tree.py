@@ -1,6 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, List, Tuple
+from dictionary import Dictionary
 
 @dataclass
 class Node:
@@ -10,11 +11,11 @@ class Node:
     left : Node = None
     right : Node = None
 
-class BinarySearchTree:
+class BinarySearchTree(Dictionary):
     """Class representing a binary search tree"""
 
     def __init__(self, data: List[Tuple] = None):
-        self.root = None
+        self._root = None
         self._count = 0
         if data: # Insert data if it exists
             for k, v in data:
@@ -23,17 +24,14 @@ class BinarySearchTree:
     def __len__(self):
         return self._count
 
-    def __getitem__(self, key):
-        return self.retrieve(key)
-
     def insert(self, key, value):
         node = Node(key, value)
         self._count += 1
-        if self.root is None:
-            self.root = node
+        if self._root is None:
+            self._root = node
             return
         current = None
-        next = self.root
+        next = self._root
 
         while next is not None:  # Next is none => The space has been found
             current = next
@@ -60,7 +58,7 @@ class BinarySearchTree:
 
     def inorder_traverse(self):
         node_list = []
-        self._inorder(self.root,node_list)
+        self._inorder(self._root,node_list)
         return node_list
     
     def _inorder(self, current_node : Node, node_ls : List):
@@ -71,7 +69,7 @@ class BinarySearchTree:
         self._inorder(current_node.right, node_ls)
 
     def _find_item(self, key):
-        current = self.root
+        current = self._root
         while current is not None:
             if key == current.key:
                 return current

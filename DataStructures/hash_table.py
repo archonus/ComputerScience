@@ -1,6 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
+from dictionary import Dictionary
 
 @dataclass
 class HashTableItem:
@@ -9,7 +10,7 @@ class HashTableItem:
     value : Any
     next : HashTableItem = None
 
-class HashTable:
+class HashTable(Dictionary):
     INITIAL_CAPACITY = 8  # The intitial capacity of the hash table. Should implement resizing
 
     def __init__(self, initial_data=None):
@@ -22,18 +23,6 @@ class HashTable:
 
     def __len__(self):
         return self._count
-
-    def __getitem__(self, key):
-        return self.retrieve(key)
-
-    def __setitem__(self, key, value):
-        try:
-            self.update(key, value)
-        except KeyError:  # If the item does not exist, insert it
-            self.insert(key, value)
-    
-    def __delitem__(self, key):
-        self.delete(key)
 
     def __repr__(self) -> str:
         return repr(self._buckets) #Simply for debugging purposes

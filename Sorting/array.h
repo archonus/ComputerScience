@@ -14,3 +14,5 @@ void set_array(intArray* a ,int* data);
 intArray* init(int length);
 
 void delete(intArray* a);
+
+void swap(intArray* a, int i, int j);

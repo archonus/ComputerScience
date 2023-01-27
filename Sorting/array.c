@@ -34,3 +34,8 @@ void delete(intArray* a){
     a = NULL;
 }
 
+void swap(intArray* a, int i, int j){
+    int tmp = a->data[i];
+    a->data[i] = a->data[j];
+    a->data[j] = tmp;
+}

@@ -19,7 +19,7 @@ int main(int argc, char const *argv[])
     int data[10] = {5,1,3,8,9};
     set_array(arr,data);
     insertSort(arr);
-    printf("%d", get(arr, 0));
+    printArr(arr);
     delete(arr);
     
     return 0;

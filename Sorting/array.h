@@ -16,3 +16,5 @@ intArray* init(int length);
 void delete(intArray* a);
 
 void swap(intArray* a, int i, int j);
+
+void printArr(intArray* a);

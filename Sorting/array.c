@@ -39,3 +39,10 @@ void swap(intArray* a, int i, int j){
     a->data[i] = a->data[j];
     a->data[j] = tmp;
 }
+
+void printArr(intArray* a){
+    for(int i = 0; i < a->length - 1; i++){
+        printf("%d, " ,a->data[i]);
+    }
+    printf("%d\n", a->data[a->length - 1]);
+}

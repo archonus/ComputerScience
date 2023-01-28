@@ -19,3 +19,5 @@ void delete(intArray* a);
 void swap(intArray* a, int i, int j);
 
 void printArr(intArray* a);
+
+intArray* subarray(intArray* a,int begin, int end);

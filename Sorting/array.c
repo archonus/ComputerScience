@@ -11,6 +11,9 @@ int get(intArray* a, int index){
     if(checkIndex(a,index)){
         return a->data[index];
     }
+    #ifdef DEBUG
+    printf("Index %d out of bounds", index);
+    #endif
     exit(EXIT_FAILURE);
     
 }
@@ -20,6 +23,9 @@ void set(intArray* a, int index, int value){
         a->data[index] = value;
     }
     else {
+    #ifdef DEBUG
+        printf("Index %d out of bounds", index);
+    #endif
         exit(EXIT_FAILURE);
     }
 }
@@ -60,8 +66,26 @@ void swap(intArray* a, int i, int j){
 }
 
 void printArr(intArray* a){
+    printf("[");
     for(int i = 0; i < a->length - 1; i++){
         printf("%d, " ,a->data[i]);
     }
-    printf("%d\n", a->data[a->length - 1]);
+    printf("%d]\n", a->data[a->length - 1]);
+}
+
+intArray* subarray(intArray* arr, int begin, int end){
+    /*Return subarray of begin inclusive to end exclusive*/
+    if(begin == 0 && end == len(arr)){
+        return arr;
+    }
+
+    if(begin < end && checkIndex(arr, begin) && checkIndex(arr, end - 1)){
+        intArray* subarr = init(end - begin);
+        for(int i = 0; i < end-begin; i++){
+            set(subarr, i, get(arr,i + begin));
+        }
+        return subarr;
+    }
+    exit(EXIT_FAILURE);
+
 }

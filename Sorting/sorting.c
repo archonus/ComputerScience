@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #define DEBUG
 #include "array.h"
+#include "heapsort.h"
 
 void insertSort(intArray* arr){
     for(int i = 1; i < len(arr); i++){
@@ -113,11 +114,11 @@ void quickSort(intArray* arr){
 
 int main(int argc, char const *argv[])
 {
-    int data[] = {5,1,3,8,9,32,5,7, 2, 22};
+    int data[] = {5,1,3,10,9, 45, 21, 2, 6};
     intArray* arr = init((sizeof data) / (sizeof data[0]));
     set_array(arr,data);
     printArr(arr);
-    mergeSort(arr);
+    heapsort(arr);
     printArr(arr);
     delete(arr);
     

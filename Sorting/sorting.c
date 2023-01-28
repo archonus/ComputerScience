@@ -30,46 +30,48 @@ void bubbleSort(intArray* arr){
     }
 }
 
-static intArray* merge(intArray* a1, intArray* a2){
-    int n = len(a1) + len(a2);
-    intArray* arr = init(n);
-    int i =0;
+
+static void merge(intArray* arr, int start, int mid, int end){
+    intArray* left = subarray(arr, start, mid);
+    intArray* right = subarray(arr, mid, end);
+    int i = 0;
     int j = 0;
-    int n1 = len(a1);
-    int n2 = len(a2);
-    while(i < n1 && j < n2){
-        int v1 = get(a1, i);
-        int v2 = get(a2, j);
+    while(i < mid - start && j < end - mid){
+        int v1 = get(left, i);
+        int v2 = get(right, j);
         if(v1 <= v2){
-            set(arr, i + j, v1);
+            set(arr, start + i + j, v1);
             i++;
         }
         else{
-            set(arr, i + j, v2);
+            set(arr, start + i + j, v2);
             j++;
         }
     }
-    while(i < n1){
-        set(arr, i + j, get(a1,i));
+    while(i < mid - start){
+        set(arr, start + i + j, get(left, i));
         i++;
     }
-    while(j < n2){
-        set(arr, i + j, get(a2, j));
-        j ++;
+    while (j < end - mid){
+        set(arr, start + i + j, get(right, j));
+        j++;
     }
-    return arr;
+    delete(left);
+    delete(right);
 }
-intArray* mergeSort(intArray* arr){
-    int n = len(arr);
-    if(n == 1){
-        return arr;
-    }
 
-    int split = n >> 1;
-    intArray* left = mergeSort(subarray(arr, 0, split));
-    intArray* right = mergeSort(subarray(arr,split, n));
-    return merge(left, right);
-    
+static void mergeSortSubArray(intArray* arr, int start, int end){
+    if(end - start < 2){
+        return;
+    }
+    int mid = (end + start) >> 1;
+    mergeSortSubArray(arr, start, mid);
+    mergeSortSubArray(arr, mid, end);
+    merge(arr, start, mid, end);
+}
+
+void mergeSort(intArray* arr){
+    mergeSortSubArray(arr, 0, len(arr));
 }
 
 static int partition(intArray* arr, int begin, int end){
@@ -111,16 +113,13 @@ void quickSort(intArray* arr){
 
 int main(int argc, char const *argv[])
 {
-    intArray* arr = init(8);
-    int data[10] = {5,1,3,8,9,32,5,7};
+    int data[] = {5,1,3,8,9,32,5,7, 2, 22};
+    intArray* arr = init((sizeof data) / (sizeof data[0]));
     set_array(arr,data);
     printArr(arr);
-    intArray* sorted_arr = mergeSort(arr);
+    mergeSort(arr);
     printArr(arr);
-    printArr(sorted_arr);
     delete(arr);
-
-    printf("%d",3 >> 1);
     
     return 0;
 }

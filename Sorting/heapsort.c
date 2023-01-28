@@ -30,6 +30,7 @@ static void maxHeapOrderSink(intArray* a, int i, int heapSize){
     //Assertion that heapSize <= len(a)
     int l = getLeftChild(i, heapSize);
     int r = getRightChild(i, heapSize);
+    //Assertion that the left and right child are roots of a max heap
     int largest = i;
     if(l != -1 && get(a, l) > get(a, i)){
         largest = l;

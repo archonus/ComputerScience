@@ -75,6 +75,17 @@ void mergeSort(intArray* arr){
     mergeSortSubArray(arr, 0, len(arr));
 }
 
+void iterativeMergeSort(intArray* arr){
+    int n = len(arr);
+    for(int size = 1; size < n; size = size << 1){
+        for (int i = 0; i < n-size; i += 2*size){
+            int end = n > i + 2 * size ? i + 2 * size : n;
+            merge(arr, i, i + size, end);
+        }
+    }
+
+}
+
 static int partition(intArray* arr, int begin, int end){
     int pivot = get(arr, end - 1);
     int low = begin;
@@ -118,7 +129,7 @@ int main(int argc, char const *argv[])
     intArray* arr = init((sizeof data) / (sizeof data[0]));
     set_array(arr,data);
     printArr(arr);
-    heapsort(arr);
+    mergeSort(arr);
     printArr(arr);
     delete(arr);
     

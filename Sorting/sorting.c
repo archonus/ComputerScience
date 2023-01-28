@@ -39,7 +39,6 @@ int main(int argc, char const *argv[])
     int data[10] = {5,1,3,8,9};
     set_array(arr,data);
     printArr(arr);
-    printf("%d\n", get(arr,5));
     bubbleSort(arr);
     printArr(arr);
     delete(arr);

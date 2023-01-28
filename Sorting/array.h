@@ -1,3 +1,4 @@
+#pragma once
 typedef struct int_array {
     int length;
     int* data;

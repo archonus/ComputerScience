@@ -1,13 +1,27 @@
 #include "array.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+
+bool checkIndex(intArray* a,int i){ //Check if index is within bounds
+    return (i >= 0 && i < a->length);
+}
 
 int get(intArray* a, int index){
-    return a->data[index];
+    if(checkIndex(a,index)){
+        return a->data[index];
+    }
+    exit(EXIT_FAILURE);
+    
 }
 
 void set(intArray* a, int index, int value){
-    a->data[index] = value;
+    if(checkIndex(a,index)){
+        a->data[index] = value;
+    }
+    else {
+        exit(EXIT_FAILURE);
+    }
 }
 
 int len(intArray* a){
@@ -35,9 +49,14 @@ void delete(intArray* a){
 }
 
 void swap(intArray* a, int i, int j){
-    int tmp = a->data[i];
-    a->data[i] = a->data[j];
-    a->data[j] = tmp;
+    if(checkIndex(a,i) && checkIndex(a,j)){
+        int tmp = a->data[i];
+        a->data[i] = a->data[j];
+        a->data[j] = tmp;
+    }
+    else{
+        exit(EXIT_FAILURE);
+    }
 }
 
 void printArr(intArray* a){

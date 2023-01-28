@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#define DEBUG
 #include "array.h"
 
 void insertSort(intArray* arr){
@@ -33,13 +34,50 @@ void mergeSort(intArray* arr){
     //To do
 }
 
+static int partition(intArray* arr, int begin, int end){
+    int pivot = get(arr, end - 1);
+    int low = begin;
+    int high = end - 1;
+    while(low < high){
+        while(low < high && get(arr,low) <= pivot){
+            low++;
+        }
+        while(low < high && get(arr,high) >= pivot){
+            high --;
+        }
+        if(low < high){
+            swap(arr, low, high);
+            low++;
+            high--;
+        }
+    }
+    swap(arr,end - 1,high);
+    return high;
+}
+
+static void quickSortPartition(intArray* arr, int begin, int end){
+    if(end - begin < 2){
+        return;
+    }
+    else{
+        int p_i = partition(arr, begin, end);
+        quickSortPartition(arr, begin, p_i);
+        quickSortPartition(arr, p_i, end);
+    }
+}
+
+void quickSort(intArray* arr){
+    quickSortPartition(arr, 0, len(arr));
+}
+
+
 int main(int argc, char const *argv[])
 {
-    intArray* arr = init(5);
-    int data[10] = {5,1,3,8,9};
+    intArray* arr = init(8);
+    int data[10] = {5,1,3,8,9,32,5,7};
     set_array(arr,data);
     printArr(arr);
-    bubbleSort(arr);
+    quickSort(arr);
     printArr(arr);
     delete(arr);
     

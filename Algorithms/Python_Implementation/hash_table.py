@@ -11,11 +11,12 @@ class HashTableItem:
     next : HashTableItem = None
 
 class HashTable(Dictionary):
+    """Hash table implementation using separate chaining"""
     INITIAL_CAPACITY = 8  # The intitial capacity of the hash table. Should implement resizing
 
     def __init__(self, initial_data=None):
         # The list is initialised to all None
-        self._buckets = [None for i in range(HashTable.INITIAL_CAPACITY)]
+        self._buckets : list[HashTableItem] = [None for i in range(HashTable.INITIAL_CAPACITY)]
         self._count = 0
         if(initial_data):
             for key, value in initial_data:
@@ -50,9 +51,7 @@ class HashTable(Dictionary):
 
     @property
     def load_factor(self):
-        # Number of filled slots (not the same as count due to separate chaining)
-        filled_slots = len([x for x in self._buckets if x is not None])
-        return filled_slots / self.capacity
+        return self._count / self.capacity
 
     def insert(self, key, value):
         """Insert an item into the hash table"""

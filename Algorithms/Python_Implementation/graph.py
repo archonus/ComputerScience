@@ -45,7 +45,8 @@ class Graph(ABC):
         if start is None:
             start = self.vertices[0]
         visited = [] # Should use set?
-        stack = [start]
+        stack = deque()
+        stack.append(start)
         while len(stack) > 0:
             current = stack.pop()
             if current not in visited:
@@ -292,4 +293,5 @@ if __name__ == "__main__":
     g.add_edge("C","D",4)
     g.add_edge("E","D",7)
     g.add_edge("B","E",6)
+    print(g.depth_first_traverse())
     print(g.djikstra())

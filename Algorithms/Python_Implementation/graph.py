@@ -32,25 +32,24 @@ class Graph(ABC):
     def check_connected(self, vertex_from, vertex_to):
         pass
 
-    def get_connected_vertices(self, vertex) -> List:
-        connected = []
+    def get_connected_vertices(self, vertex) -> set:
+        connected = set()
         n = len(self.vertices)
         for i in range(n):
             vertex_to = self.vertices[i]
             if self.check_connected(vertex,vertex_to):
-                connected.append(vertex_to)            
+                connected.add(vertex_to)          
         return connected
 
     def depth_first_traverse(self, start = None):
         if start is None:
             start = self.vertices[0]
-        visited = [] # Should use set?
+        visited = set()
         stack = deque()
         stack.append(start)
         while len(stack) > 0:
             current = stack.pop()
-            if current not in visited:
-                visited.append(current)
+            visited.add(current)
             for node in self.get_connected_vertices(current):
                 if node not in visited:
                     stack.append(node)
@@ -60,13 +59,12 @@ class Graph(ABC):
     def breadth_first_traverse(self, start = None):
         if start is None:
             start = self.vertices[0]
-        visited = []
+        visited = set()
         queue = deque()
         queue.append(start)
         while len(queue) > 0:
             current = queue.popleft()
-            if current not in visited:
-                visited.append(current)
+            visited.add(current)
             for node in self.get_connected_vertices(current):
                 if node not in visited:
                     queue.append(node)
@@ -79,14 +77,13 @@ class Graph(ABC):
         distances = {v : inf for v in self.vertices}
         back = {v : "" for v in self.vertices}
         distances[start] = 0
-        visited = []
+        visited = set()
         queue = []
         queue.append(start)
         while len(queue) > 0:
             queue.sort(key= lambda v : distances[v])
             current = queue.pop(0) # Remove first item
-            if current not in visited:
-                visited.append(current)
+            visited.add(current)
             for v in self.get_connected_vertices(current):
                 if v not in visited:
                     queue.append(v)
@@ -176,12 +173,12 @@ class AdjacencyListGraph(Graph):
     def depth_first_traverse(self, start = None):
         if start is None:
             start = self.vertices[0]
-        visited = []
+        visited = set()
         self._recursive_depth_first(start, visited)
         return visited
 
-    def _recursive_depth_first(self, current, visited):
-        visited.append(current)
+    def _recursive_depth_first(self, current, visited : set):
+        visited.add(current)
         for edge in self.adj_list[current]: # Checks all the edges from the current node
             if edge.to not in visited:
                 self._recursive_depth_first(edge.to, visited)

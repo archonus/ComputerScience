@@ -59,18 +59,16 @@ class Graph(ABC):
     def breadth_first_traverse(self, start = None):
         if start is None:
             start = self.vertices[0]
-        visited = []
+        seen = {start}
         queue = deque()
         queue.append(start)
         while len(queue) > 0:
             current = queue.popleft()
-            if current not in visited:
-                visited.append(current)
             for node in self.get_connected_vertices(current):
-                if node not in visited:
+                if node not in seen:
                     queue.append(node)
 
-        return visited
+        return seen
 
     def djikstra(self, start= None):
         if start is None:

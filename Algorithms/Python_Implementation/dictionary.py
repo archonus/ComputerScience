@@ -13,6 +13,10 @@ class Dictionary(ABC):
     def update(self, key, value):
         pass
 
+    @abstractmethod
+    def delete(self, key):
+        pass
+
     def __getitem__(self, key):
         return self.retrieve(key)
 

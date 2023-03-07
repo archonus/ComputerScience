@@ -32,7 +32,7 @@ class Graph(ABC):
     def check_connected(self, vertex_from, vertex_to):
         pass
 
-    def get_connected_vertices(self, vertex) -> set:
+    def get_neighbours(self, vertex) -> set:
         connected = set()
         n = len(self.vertices)
         for i in range(n):
@@ -50,7 +50,7 @@ class Graph(ABC):
         while len(stack) > 0:
             current = stack.pop()
             visited.add(current)
-            for node in self.get_connected_vertices(current):
+            for node in self.get_neighbours(current):
                 if node not in visited:
                     stack.append(node)
         
@@ -64,7 +64,7 @@ class Graph(ABC):
         queue.append(start)
         while len(queue) > 0:
             current = queue.popleft()
-            for neighbour in self.get_connected_vertices(current):
+            for neighbour in self.get_neighbours(current):
                 if neighbour not in seen:
                     queue.append(neighbour)
                     seen.add(neighbour)
@@ -84,7 +84,7 @@ class Graph(ABC):
             queue.sort(key= lambda v : distances[v])
             current = queue.pop(0) # Remove first item
             visited.add(current)
-            for v in self.get_connected_vertices(current):
+            for v in self.get_neighbours(current):
                 if v not in visited:
                     queue.append(v)
                     new_distance = distances[current] + self.get_edge_weight(current, v) # Check distance

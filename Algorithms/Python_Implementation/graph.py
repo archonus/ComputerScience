@@ -64,9 +64,10 @@ class Graph(ABC):
         queue.append(start)
         while len(queue) > 0:
             current = queue.popleft()
-            for node in self.get_connected_vertices(current):
-                if node not in seen:
-                    queue.append(node)
+            for neighbour in self.get_connected_vertices(current):
+                if neighbour not in seen:
+                    queue.append(neighbour)
+                    seen.add(neighbour)
 
         return seen
 

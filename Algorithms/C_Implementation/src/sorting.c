@@ -2,8 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #define DEBUG
-#include "array.h"
-#include "heapsort.h"
+#include "sorting.h"
 
 void insertSort(intArray* arr){
     for(int i = 1; i < len(arr); i++){

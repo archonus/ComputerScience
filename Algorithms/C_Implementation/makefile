@@ -8,26 +8,21 @@ EXEC_FILES = sorting
 OBJECTS = $(addprefix $(OBJ)/, $(SOURCE_FILES:.c=.o))
 EXECS = $(addprefix $(BIN)/,$(EXEC_FILES))
 
+build : $(EXECS)
 
+$(EXECS): $(OBJECTS)
+	gcc -o $@ $^
 
-bin/sorting : $(OBJECTS)
-	gcc -o bin/sorting $(OBJECTS)
+$(OBJECTS): $(OBJ)/%.o : $(SRC)/%.c $(SRC)/%.h
+	gcc -c $< -o $@
 
-sorting.o : sorting.c array.h
-	gcc -c sorting.c
-
-array.o : array.c array.h
-	gcc -c array.c
-
-heapsort.o : heapsort.c heapsort.h
-	gcc -c heapsort.c
-
-
-.PHONY : hello clean
 
 clean:
-	rm sorting.out $(OBJECTS)
+	rm $(BIN)/*
+	rm $(OBJ)/*
 
 hello:
 	@echo $(EXEC_FILES)
 	@echo $(EXECS)
+
+.PHONY : hello clean

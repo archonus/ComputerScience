@@ -25,4 +25,4 @@ hello:
 	@echo $(EXEC_FILES)
 	@echo $(EXECS)
 
-.PHONY : hello clean
+.PHONY : hello clean build

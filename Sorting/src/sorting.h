@@ -1,5 +1,7 @@
+#pragma once
 #include "array.h"
 #include "heapsort.h"
+
 
 void quickSort(intArray* arr);
 void insertSort(intArray* arr);

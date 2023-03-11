@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#define DEBUG
 
 bool checkIndex(intArray* a,int i){ //Check if index is within bounds
     return (i >= 0 && i < a->length);

@@ -1,5 +1,5 @@
-bin/main : obj/main.o obj/list.o
-	gcc -o bin/main obj/main.o obj/list.o
+# bin/main : obj/main.o obj/list.o
+# 	gcc -o bin/main obj/main.o obj/list.o
 
 obj/main.o : src/main.c src/list.h
 	gcc -c src/main.c -o obj/main.o

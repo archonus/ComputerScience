@@ -32,14 +32,12 @@ class Graph(ABC):
     def check_connected(self, vertex_from, vertex_to):
         pass
 
-    def get_neighbours(self, vertex) -> set:
-        connected = set()
+    def get_neighbours(self, vertex):
         n = len(self.vertices)
         for i in range(n):
             vertex_to = self.vertices[i]
             if self.check_connected(vertex,vertex_to):
-                connected.add(vertex_to)          
-        return connected
+                yield vertex_to
 
     def depth_first_traverse(self, start = None):
         if start is None:

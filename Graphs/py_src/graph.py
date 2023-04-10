@@ -48,11 +48,11 @@ class Graph(ABC):
         while len(stack) > 0:
             current = stack.pop()
             visited.add(current)
+            yield current
             for node in self.get_neighbours(current):
                 if node not in visited:
                     stack.append(node)
-        
-        return visited
+                    visited.add(node)
 
     def breadth_first_traverse(self, start = None):
         if start is None:
@@ -62,12 +62,11 @@ class Graph(ABC):
         queue.append(start)
         while len(queue) > 0:
             current = queue.popleft()
+            yield current
             for neighbour in self.get_neighbours(current):
                 if neighbour not in seen:
                     queue.append(neighbour)
                     seen.add(neighbour)
-
-        return seen
 
     def djikstra(self, start= None):
         if start is None:
@@ -172,11 +171,11 @@ class AdjacencyListGraph(Graph):
         if start is None:
             start = self.vertices[0]
         visited = set()
-        self._recursive_depth_first(start, visited)
-        return visited
+        return self._recursive_depth_first(start, visited)
 
     def _recursive_depth_first(self, current, visited : set):
         visited.add(current)
+        yield current
         for edge in self.adj_list[current]: # Checks all the edges from the current node
             if edge.to not in visited:
                 self._recursive_depth_first(edge.to, visited)
@@ -288,5 +287,6 @@ if __name__ == "__main__":
     g.add_edge("C","D",4)
     g.add_edge("E","D",7)
     g.add_edge("B","E",6)
-    print(g.depth_first_traverse())
+    print(list(g.depth_first_traverse()))
+    print(list(g.breadth_first_traverse()))
     print(g.djikstra())

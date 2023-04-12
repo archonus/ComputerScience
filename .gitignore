@@ -1,7 +1,8 @@
-.vs/
-.vscode/
+*/.vs/
+*/.vscode/
 *.pyc
 __pycache__/
 *.out
 *.o
-bin/
+*/bin/
+*/.idea/

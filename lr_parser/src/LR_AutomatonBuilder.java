@@ -4,6 +4,10 @@ import grammar.Terminal;
 import java.util.*;
 
 public class LR_AutomatonBuilder {
+    public LR_AutomatonBuilder(Grammar grammar) {
+        this.grammar = grammar;
+    }
+
     Grammar grammar;
     private final Set<LRAutomatonState> canonicalCollection = new HashSet<>();
 
@@ -11,13 +15,9 @@ public class LR_AutomatonBuilder {
 
     LRAutomatonState startState;
 
-    record GotoEntry(LRAutomatonState I, GrammarSymbol X){}
+    Map<LRParser.ActionEntry, ShiftReduceAction> actionTable = new HashMap<>();
 
-    record ActionEntry(LRAutomatonState I, Terminal a){}
-
-    Map<ActionEntry, ShiftReduceAction> actionTable = new HashMap<>();
-
-    Map<GotoEntry, LRAutomatonState> gotoTable = new HashMap<>();
+    Map<LRParser.GotoEntry, LRAutomatonState> gotoTable = new HashMap<>();
 
     Set<LRItem> getClosure(Set<LRItem> itemSet){
         HashSet<LRItem> result = new HashSet<>(itemSet);
@@ -45,7 +45,7 @@ public class LR_AutomatonBuilder {
     }
 
     void computeGoto(LRAutomatonState state, GrammarSymbol X){
-        GotoEntry key = new GotoEntry(state, X);
+        LRParser.GotoEntry key = new LRParser.GotoEntry(state, X);
         var result = gotoTable.get(key);
         if (result == null) { // Not been processed
             Set<LRItem> immediateTransition = new HashSet<>();
@@ -68,8 +68,8 @@ public class LR_AutomatonBuilder {
                 if(opt_symbol.isPresent()){
                     GrammarSymbol symbol = opt_symbol.get();
                     if(symbol.type() == GrammarSymbol.SymbolType.TERMINAL){
-                        var nextState = Objects.requireNonNull(gotoTable.get(new GotoEntry(state, symbol)));
-                        actionTable.putIfAbsent(new ActionEntry(state, symbol.terminal()),
+                        var nextState = Objects.requireNonNull(gotoTable.get(new LRParser.GotoEntry(state, symbol)));
+                        actionTable.putIfAbsent(new LRParser.ActionEntry(state, symbol.terminal()),
                                 new ShiftReduceAction(ShiftReduceAction.ActionType.SHIFT, states.indexOf(nextState)));
                     }
                 }
@@ -78,7 +78,7 @@ public class LR_AutomatonBuilder {
                     if(head != NonTerminal.STATEMENT){
                         for(Terminal a : grammar.follow(head)){
                             actionTable.putIfAbsent(
-                                    new ActionEntry(state, a),
+                                    new LRParser.ActionEntry(state, a),
                                     new ShiftReduceAction(ShiftReduceAction.ActionType.REDUCE,
                                             grammar.rules().indexOf(item.production()))
                             );
@@ -87,7 +87,7 @@ public class LR_AutomatonBuilder {
                     else{
                         if(item.position() == item.production().bodyLength()){
                             actionTable.putIfAbsent(
-                                    new ActionEntry(state, Terminal.END),
+                                    new LRParser.ActionEntry(state, Terminal.END),
                                     ShiftReduceAction.Accept
                             );
                         }
@@ -123,6 +123,12 @@ public class LR_AutomatonBuilder {
             cont = n != canonicalCollection.size();
         } while(cont);
         states = List.of(canonicalCollection.toArray(new LRAutomatonState[0]));
+    }
+
+    public LRParser buildParser(){
+        computeCanonicalCollection();
+        computeTables();
+        return new LRParser(grammar, states, startState, gotoTable, actionTable);
     }
 
 

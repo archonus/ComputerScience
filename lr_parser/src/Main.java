@@ -1,25 +1,29 @@
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Main {
-    public static void main(String[] args) throws IOException, LexerException {
+    public static void main(String[] args) throws IOException, LexerException, ParserException {
         System.out.println("Hello world!");
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-//        Lexer l = new Lexer(reader);
+        BufferedReader reader = new BufferedReader(new FileReader("input.txt"));
+        Lexer l = new Lexer(reader);
 //        Token t = l.getNextToken();
 //        while(!t.equals(Token.End)){
 //            System.out.println(t);
 //            t = l.getNextToken();
 //        }
-        var builder = new LR_AutomatonBuilder();
-        builder.grammar = new ParserGrammar();
-        builder.computeCanonicalCollection();
-        for(var state : builder.states){
-            System.out.println(state);
-        }
-        builder.computeTables();
-        System.out.println(builder.actionTable);
+        var builder = new LR_AutomatonBuilder(new ParserGrammar());
+//        builder.computeCanonicalCollection();
+//        for(var state : builder.states){
+//            System.out.println(state);
+//        }
+//        builder.computeTables();
+//        System.out.print("Start state: " + builder.states.indexOf(builder.startState));
+//        System.out.println(builder.startState);
+//        System.out.println(builder.actionTable);
+        builder.buildParser().parse(l);
+
 
     }
 }

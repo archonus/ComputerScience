@@ -1,3 +1,5 @@
+package grammar;
+
 public enum Terminal {
     OPEN_BRACKET,
     CLOSE_BRACKET,

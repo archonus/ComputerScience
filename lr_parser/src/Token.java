@@ -1,3 +1,5 @@
+import grammar.Terminal;
+
 public record Token(Terminal type, String lexeme) {
     public static Token End = new Token(Terminal.END, "");
     public static Token Factorial = new Token(Terminal.FACTORIAL, "!");

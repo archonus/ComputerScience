@@ -1,3 +1,5 @@
+import grammar.Terminal;
+
 import java.io.IOException;
 import java.io.Reader;
 

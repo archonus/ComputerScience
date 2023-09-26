@@ -12,6 +12,14 @@ public class Main {
 //            System.out.println(t);
 //            t = l.getNextToken();
 //        }
+        var builder = new LR_AutomatonBuilder();
+        builder.grammar = new ParserGrammar();
+        builder.computeCanonicalCollection();
+        for(var state : builder.states){
+            System.out.println(state);
+        }
+        builder.computeTables();
+        System.out.println(builder.actionTable);
 
     }
 }

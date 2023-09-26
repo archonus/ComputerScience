@@ -1,3 +1,6 @@
+import grammar.NonTerminal;
+import grammar.Terminal;
+
 public record GrammarSymbol(GrammarSymbol.SymbolType type, Terminal terminal, NonTerminal nonTerminal) {
     public enum SymbolType {TERMINAL, NONTERMINAL}
 
@@ -9,4 +12,12 @@ public record GrammarSymbol(GrammarSymbol.SymbolType type, Terminal terminal, No
         return new GrammarSymbol(SymbolType.NONTERMINAL, null,A);
     }
 
+    @Override
+    public String toString() {
+        return switch (type){
+
+            case TERMINAL -> terminal.toString();
+            case NONTERMINAL -> nonTerminal.toString();
+        };
+    }
 }

@@ -6,11 +6,18 @@ import java.io.Reader;
 public class Lexer {
     Reader reader;
 
+    Character next = null;
+
     public Lexer(Reader reader) {
         this.reader = reader;
     }
 
     private Character getNextCharacter() throws IOException {
+        if(next != null){ // We've already read in the next character, but retracted it
+            var temp = next;
+            next = null; // We have emptied buffer
+            return temp;
+        }
         var i = reader.read();
         if (i == -1) {
             return null;
@@ -28,6 +35,8 @@ public class Lexer {
             }
         }
         while (Character.isWhitespace(current_char));
+
+        // Character is no longer whitespace
 
         StringBuilder lexemeBuilder = new StringBuilder();
 
@@ -69,25 +78,26 @@ public class Lexer {
         do {
             lexemeBuilder.append(current_char);
             Character c = getNextCharacter();
-            if (c == null) {
+            if (c == null) { // End of input
                 return new Token(Terminal.NUMBER, lexemeBuilder.toString());
             }
             current_char = c;
         } while (Character.isDigit(current_char));
         if (current_char != '.') {
-            return new Token(Terminal.NUMBER, lexemeBuilder.toString());
+            next = current_char; // Retract back
         }
         else { // Repeat for after decimal point
             do {
                 lexemeBuilder.append(current_char);
                 Character c = getNextCharacter();
-                if (c == null) {
+                if (c == null) { // End of input
                     return new Token(Terminal.NUMBER, lexemeBuilder.toString());
                 }
                 current_char = c;
             } while (Character.isDigit(current_char));
-            return new Token(Terminal.NUMBER, lexemeBuilder.toString());
+            next = current_char; // Retract back input
         }
+        return new Token(Terminal.NUMBER, lexemeBuilder.toString());
     }
 
 }

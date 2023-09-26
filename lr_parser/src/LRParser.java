@@ -36,6 +36,7 @@ public class LRParser {
         Stack<LRAutomatonState> statesStack = new Stack<>();
         statesStack.push(startState);
         Token a = lexer.getNextToken();
+        System.out.println(a);
         while (true){
             LRAutomatonState currentState = statesStack.peek();
             ShiftReduceAction action = actionTable.get(new ActionEntry(currentState, a.type()));
@@ -50,19 +51,20 @@ public class LRParser {
                     //TODO Push token onto stack
                     statesStack.push(states.get(action.index()));
                     a = lexer.getNextToken(); // Consume input
+                    System.out.println(a);
                 }
                 case REDUCE -> {
                     GrammarProduction production = grammar.rules().get(action.index());
                     for (int i = 0; i < production.bodyLength(); i++) {
                         statesStack.pop();
                         // TODO Pop corresponding tokens stack and use to store
-                        var newState = gotoTable.get(
-                                new GotoEntry(statesStack.peek(),
-                                        GrammarSymbol.fromNonTerminal(production.head()))
-                        );
-                        statesStack.push(newState);
-                        System.out.println(production);
                     }
+                    var newState = gotoTable.get(
+                            new GotoEntry(statesStack.peek(),
+                                    GrammarSymbol.fromNonTerminal(production.head()))
+                    );
+                    statesStack.push(newState);
+                    System.out.println(production);
                 }
                 case ERROR -> throw new ParserException();
             }

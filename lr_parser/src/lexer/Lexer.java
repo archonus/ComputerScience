@@ -1,3 +1,5 @@
+package lexer;
+
 import grammar.Terminal;
 
 import java.io.IOException;

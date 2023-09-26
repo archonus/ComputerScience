@@ -1,86 +1,11 @@
-import grammar.NonTerminal;
-import grammar.Terminal;
+package grammar;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 import static grammar.NonTerminal.*;
 import static grammar.Terminal.*;
 
-public abstract class Grammar {
-    private final List<GrammarProduction> rules;
-
-    public Grammar(List<GrammarProduction> rules) {
-        this.rules = rules;
-    }
-
-    public Stream<GrammarProduction> getProductionsFor(NonTerminal head) {
-        return rules.stream().filter(rule -> rule.head().equals(head));
-    }
-
-    public List<GrammarProduction> rules() {
-        return rules;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (Grammar) obj;
-        return Objects.equals(this.rules, that.rules);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(rules);
-    }
-
-    @Override
-    public String toString() {
-        return "Grammar[" +
-                "rules=" + rules + ']';
-    }
-
-    public abstract Set<Terminal> first(NonTerminal A);
-
-    public abstract Set<Terminal> follow(NonTerminal A);
-
-}
-
-class TestGrammar extends Grammar {
-
-    public TestGrammar() {
-        super(List.of(
-                new GrammarProduction(STATEMENT, List.of(GrammarSymbol.fromNonTerminal(E))),
-                new GrammarProduction(E, List.of(GrammarSymbol.fromNonTerminal(S))),
-                new GrammarProduction(E,
-                        List.of(GrammarSymbol.fromNonTerminal(E),
-                                GrammarSymbol.fromTerminal(PLUS),
-                                GrammarSymbol.fromNonTerminal(S))),
-                new GrammarProduction(S, List.of(GrammarSymbol.fromTerminal(NUMBER)))
-        ));
-    }
-
-    @Override
-    public Set<Terminal> first(NonTerminal A) {
-        return switch (A) {
-
-            case F, M, C -> Set.of();
-            case S, E, STATEMENT -> Set.of(NUMBER);
-        };
-    }
-
-    @Override
-    public Set<Terminal> follow(NonTerminal A) {
-        return switch (A) {
-            case STATEMENT -> Set.of(END);
-            case E, S -> Set.of(PLUS, END);
-            default -> Set.of();
-        };
-    }
-}
-
-class ParserGrammar extends Grammar {
+public class ParserGrammar extends Grammar {
     Map<NonTerminal, Set<Terminal>> firsts = new EnumMap<>(NonTerminal.class);
     Map<NonTerminal, Set<Terminal>> follows = new EnumMap<>(NonTerminal.class);
 

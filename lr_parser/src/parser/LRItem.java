@@ -1,3 +1,8 @@
+package parser;
+
+import grammar.GrammarProduction;
+import grammar.GrammarSymbol;
+
 import java.util.Optional;
 
 public record LRItem(GrammarProduction production, int position) {

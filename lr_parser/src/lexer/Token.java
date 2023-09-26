@@ -1,3 +1,5 @@
+package lexer;
+
 import grammar.Terminal;
 
 public record Token(Terminal type, String lexeme) {

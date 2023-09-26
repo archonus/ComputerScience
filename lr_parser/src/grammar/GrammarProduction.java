@@ -1,4 +1,4 @@
-import grammar.NonTerminal;
+package grammar;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ public record GrammarProduction(NonTerminal head, List<GrammarSymbol> body) {
 
     @Override
     public String toString() {
-        return "GrammarProduction{" +
+        return "grammar.GrammarProduction{" +
                 head +
                 " -> " + body +
                 '}';

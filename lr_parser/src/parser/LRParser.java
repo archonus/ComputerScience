@@ -1,7 +1,14 @@
+package parser;
+
+import grammar.Grammar;
+import grammar.GrammarProduction;
+import grammar.GrammarSymbol;
 import grammar.Terminal;
+import lexer.Lexer;
+import lexer.LexerException;
+import lexer.Token;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -21,10 +28,10 @@ public class LRParser {
     Map<ActionEntry, ShiftReduceAction> actionTable;
 
     LRParser(Grammar grammar,
-                    List<LRAutomatonState> states,
-                    LRAutomatonState startState,
-                    Map<GotoEntry, LRAutomatonState> gotoTable,
-                    Map<ActionEntry, ShiftReduceAction> actionTable) {
+             List<LRAutomatonState> states,
+             LRAutomatonState startState,
+             Map<GotoEntry, LRAutomatonState> gotoTable,
+             Map<ActionEntry, ShiftReduceAction> actionTable) {
         this.grammar = grammar;
         this.states = states;
         this.startState = startState;
@@ -32,7 +39,7 @@ public class LRParser {
         this.actionTable = actionTable;
     }
 
-    void parse(Lexer lexer) throws IOException, LexerException, ParserException {
+    public void parse(Lexer lexer) throws IOException, LexerException, ParserException {
         Stack<LRAutomatonState> statesStack = new Stack<>();
         statesStack.push(startState);
         Token a = lexer.getNextToken();

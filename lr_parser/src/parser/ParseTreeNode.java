@@ -25,7 +25,7 @@ public class ParseTreeNode {
     private ParseTreeNode(GrammarSymbol symbol, Token token, Collection<ParseTreeNode> children){
         this.token = token;
         this.symbol = symbol;
-        this.children = Collections.emptyList();
+        this.children = children;
     }
 
     public static ParseTreeNode createParseTreeNode(Token token) {

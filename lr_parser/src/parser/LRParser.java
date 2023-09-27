@@ -9,9 +9,7 @@ import lexer.LexerException;
 import lexer.Token;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 public class LRParser {
     record GotoEntry(LRAutomatonState I, GrammarSymbol X){}
@@ -39,38 +37,43 @@ public class LRParser {
         this.actionTable = actionTable;
     }
 
-    public void parse(Lexer lexer) throws IOException, LexerException, ParserException {
-        Stack<LRAutomatonState> statesStack = new Stack<>();
+    public ParseTreeNode parse(Lexer lexer) throws IOException, LexerException, ParserException {
+        Deque<LRAutomatonState> statesStack = new ArrayDeque<>();
+        Deque<ParseTreeNode> nodesStack = new ArrayDeque<>();
         statesStack.push(startState);
-        Token a = lexer.getNextToken();
-        System.out.println(a);
+        Token token = lexer.getNextToken();
+        System.out.println(token);
         while (true){
             LRAutomatonState currentState = statesStack.peek();
-            ShiftReduceAction action = actionTable.get(new ActionEntry(currentState, a.type()));
+            ShiftReduceAction action = actionTable.get(new ActionEntry(currentState, token.type()));
             if(action == null){
-                throw new ParserException("Invalid parse");
+                throw new ParserException("Syntax error: unexpected token " + token.lexeme());
             }
             switch (action.actionType()){
                 case ACCEPT -> {
-                    return;
+                    // Assert that stack length == 1
+                    return nodesStack.pop();
                 }
                 case SHIFT -> {
-                    //TODO Push token onto stack
-                    statesStack.push(states.get(action.index()));
-                    a = lexer.getNextToken(); // Consume input
-                    System.out.println(a);
+                    nodesStack.push(ParseTreeNode.createParseTreeNode(token));
+                    statesStack.push(states.get(action.index())); // Push next state onto stack
+                    token = lexer.getNextToken(); // Consume input
+                    System.out.println(token);
                 }
                 case REDUCE -> {
                     GrammarProduction production = grammar.rules().get(action.index());
+                    // Using a stack reverses the order of the children
+                    Deque<ParseTreeNode> children = new ArrayDeque<>(production.bodyLength());
                     for (int i = 0; i < production.bodyLength(); i++) {
                         statesStack.pop();
-                        // TODO Pop corresponding tokens stack and use to store
+                        children.push(nodesStack.pop());
                     }
                     var newState = gotoTable.get(
                             new GotoEntry(statesStack.peek(),
                                     GrammarSymbol.fromNonTerminal(production.head()))
                     );
                     statesStack.push(newState);
+                    nodesStack.push(ParseTreeNode.createParseTreeNode(production.head(), children));
                     System.out.println(production);
                 }
                 case ERROR -> throw new ParserException();

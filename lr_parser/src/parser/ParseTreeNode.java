@@ -24,7 +24,7 @@ public class ParseTreeNode {
 
     private ParseTreeNode(GrammarSymbol symbol, Token token, Collection<ParseTreeNode> children){
         this.token = token;
-        this.symbol = GrammarSymbol.fromTerminal(token.type());
+        this.symbol = symbol;
         this.children = Collections.emptyList();
     }
 
@@ -59,6 +59,11 @@ public class ParseTreeNode {
 
     @Override
     public String toString() {
+        if(isLeaf()){
+            return "ParseTreeNode{" +
+                    "token=" + token +
+                    '}';
+        }
         return "ParseTreeNode{" +
                 "symbol=" + symbol +
                 ", children=" + children +

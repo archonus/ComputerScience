@@ -4,14 +4,18 @@ import lexer.LexerException;
 import parser.LR_AutomatonBuilder;
 import parser.ParserException;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws IOException, LexerException, ParserException {
         System.out.println("Hello world!");
-        BufferedReader reader = new BufferedReader(new FileReader("input.txt"));
+        Reader reader;
+        if(args.length == 0){
+            reader = new BufferedReader(new FileReader("input.txt"));
+        }
+        else{
+            reader = new StringReader(args[0]);
+        }
         Lexer l = new Lexer(reader);
 //        lexer.Token t = l.getNextToken();
 //        while(!t.equals(lexer.Token.End)){
@@ -27,7 +31,8 @@ public class Main {
 //        System.out.print("Start state: " + builder.states.indexOf(builder.startState));
 //        System.out.println(builder.startState);
 //        System.out.println(builder.actionTable);
-        builder.buildParser().parse(l);
+        var tree = builder.buildParser().parse(l);
+        System.out.println(tree);
 
 
     }

@@ -9,19 +9,45 @@ typedef struct xlistNode
 
 typedef struct xlist
 {
-    Node *head;
+    Node *start;
+    Node *end;
 } XORList;
 
 XORList *createEmptyList()
 {
     XORList *ls = malloc(sizeof(XORList));
-    ls->head = NULL;
+    ls->start = NULL;
+    ls->end = NULL;
     return ls;
 }
 
 bool isEmpty(XORList *ls)
 {
-    return ls->head == NULL;
+    return ls->start == NULL;
+}
+
+void insert(int x, XORList *ls)
+{
+    Node *node = malloc(sizeof(Node));
+    node->value = x;
+    if (ls->start == NULL)
+    {
+        // Was empty, so now a 1 element list, so prev = next = 0 => xor = 0
+        node->xor_pointer = NULL;
+        ls->start = node;
+        ls->end = node;
+    }
+    else
+    {
+        Node* prev = ls->end;
+        ls->end = node;
+        prev->xor_pointer = (int)prev->xor_pointer ^ (int)node;
+        node->xor_pointer = prev; // next = 0, so xor_pointer = prev
+    }
+}
+
+void map(int (*f)(int), XORList* ls){
+    // TODO
 }
 
 int main(int argc, char const *argv[])

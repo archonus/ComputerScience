@@ -54,7 +54,7 @@ void append(XORList *ls, int x)
     }
 }
 
-int insertAt(XORList *ls, int index, int x)
+int insert_at(XORList *ls, int index, int x)
 {
     if (ls->start == NULL)
     { // Empty list
@@ -107,7 +107,7 @@ int insertAt(XORList *ls, int index, int x)
     return 0;
 }
 
-int deleteAt(XORList *ls, int index)
+int delete_at(XORList *ls, int index)
 {
     if (ls->start == NULL)
     {
@@ -125,32 +125,32 @@ int deleteAt(XORList *ls, int index)
     }
     else
     {
-        Node* prev = NULL;
-        Node* current = ls->start;
-        Node* next = ls->start->xor_pointer;
+        Node *prev = NULL;
+        Node *current = ls->start;
+        Node *next = ls->start->xor_pointer;
         int i = 0;
-        while(current != ls->end && i < index)
+        while (current != ls->end && i < index)
         {
             prev = current;
             current = next;
             next = ptr_xor(prev, current->xor_pointer);
-            i++;            
+            i++;
         }
-        if(index > i)
+        if (index > i)
         {
             printf("%d is invalid index\n", index);
             return -1;
         }
-        Node* prev_prev = ptr_xor(prev->xor_pointer, current);
+        Node *prev_prev = ptr_xor(prev->xor_pointer, current);
         prev->xor_pointer = ptr_xor(prev_prev, next);
 
-        if(current == ls->end)
+        if (current == ls->end)
         {
             ls->end = prev;
         }
         else
         { // next exists
-            Node* next_next = ptr_xor(next->xor_pointer, current);
+            Node *next_next = ptr_xor(next->xor_pointer, current);
             next->xor_pointer = ptr_xor(prev, next_next);
         }
         free(current);
@@ -206,34 +206,29 @@ int main(int argc, char const *argv[])
     }
 
     map(ls, add_one);
-    insertAt(ls, 0, 0);
+    insert_at(ls, 0, 0);
     printf("Inserted 0 at start\n");
-    foreach (ls, print_int)
-        ;
+    foreach (ls, print_int);
 
-    insertAt(ls, 200, 200);
+    insert_at(ls, 200, 200);
     printf("Inserted 200 at end\n");
-    foreach (ls, print_int)
-        ;
+    foreach (ls, print_int);
 
-    insertAt(ls, 1, 500);
+    insert_at(ls, 1, 500);
     printf("500 inserted at index 1\n");
-    foreach (ls, print_int)
-        ;
+    foreach (ls, print_int);
 
-    insertAt(ls, 4, 300);
+    insert_at(ls, 4, 300);
     printf("300 inserted at index 4\n");
-    foreach (ls, print_int)
-        ;
+    foreach (ls, print_int);
 
-    deleteAt(ls, 4);
+    delete_at(ls, 4);
     printf("Deleted 300 from index 4\n");
-    foreach(ls, print_int);
+    foreach (ls, print_int);
 
-    deleteAt(ls, 0);
+    delete_at(ls, 0);
     printf("Deleted 0 at start\n");
-    foreach (ls, print_int)
-        ;
+    foreach (ls, print_int);
 
     return 0;
 }

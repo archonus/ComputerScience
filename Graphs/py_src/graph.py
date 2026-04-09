@@ -68,7 +68,7 @@ class Graph(ABC):
                     queue.append(neighbour)
                     seen.add(neighbour)
 
-    def djikstra(self, start= None):
+    def dijkstra(self, start= None):
         if start is None:
             start = self.vertices[0]
         distances = {v : inf for v in self.vertices}

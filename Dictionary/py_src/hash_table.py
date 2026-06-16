@@ -1,24 +1,32 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 from dictionary import Dictionary
+
 
 @dataclass
 class HashTableItem:
     """Class representing an item in the hash table"""
-    key : Any
-    value : Any
-    next : HashTableItem = None
+
+    key: Any
+    value: Any
+    next: Optional[HashTableItem] = None
+
 
 class HashTable(Dictionary):
     """Hash table implementation using separate chaining"""
-    INITIAL_CAPACITY = 8  # The intitial capacity of the hash table. Should implement resizing
+
+    INITIAL_CAPACITY = (
+        8  # The intitial capacity of the hash table. Should implement resizing
+    )
 
     def __init__(self, initial_data=None):
         # The list is initialised to all None
-        self._buckets : list[HashTableItem] = [None for i in range(HashTable.INITIAL_CAPACITY)]
+        self._buckets: list[Optional[HashTableItem]] = [
+            None for _ in range(HashTable.INITIAL_CAPACITY)
+        ]
         self._count = 0
-        if(initial_data):
+        if initial_data:
             for key, value in initial_data:
                 self.insert(key, value)
 
@@ -26,20 +34,22 @@ class HashTable(Dictionary):
         return self._count
 
     def __repr__(self) -> str:
-        return repr(self._buckets) #Simply for debugging purposes
+        return repr(self._buckets)  # Simply for debugging purposes
 
-    def _get_index(self, key):
+    def _get_index(self, key) -> int:
         # Hash the key and find the index
         return hash(key) % self.capacity
-    
+
     def _find_item(self, key) -> HashTableItem:
         """Find the HashTableItem from the key. Raises KeyError if cannot find"""
         index = self._get_index(key)
-        if self._buckets[index] is None:  # If the bucket is empty
-            raise KeyError
         current_item = self._buckets[index]
+        if current_item is None:  # If the bucket is empty
+            raise KeyError(f"{key} not found in table")
         while current_item.key != key:
-            if current_item.next is None:  # There are no more items to check and key has not been found
+            if (
+                current_item.next is None
+            ):  # There are no more items to check and key has not been found
                 raise KeyError
             else:  # Move to next item in linked list
                 current_item = current_item.next
@@ -57,7 +67,7 @@ class HashTable(Dictionary):
         """Insert an item into the hash table"""
         item = HashTableItem(key, value)
         index = self._get_index(key)
-        if(self._buckets[index] is None):  # The bucket is empty
+        if self._buckets[index] is None:  # The bucket is empty
             self._buckets[index] = item
         else:  # Collision
             # Store a reference to the current item in the bucket
@@ -79,15 +89,18 @@ class HashTable(Dictionary):
     def delete(self, key):
         """Delete an item from the hash table from its key. Raises KeyError if key not found"""
         index = self._get_index(key)
-        if self._buckets[index] is None:  # If the bucket is empty
-            raise KeyError
         current_item = self._buckets[index]
-        if current_item.key == key: #Head of the linked list
-            self._buckets[index] = current_item.next #Move the pointer along, or to None if there is not another item
+        if current_item is None:  # If the bucket is empty
+            raise KeyError
+
+        if current_item.key == key:  # Head of the linked list
+            self._buckets[index] = (
+                current_item.next
+            )  # Move the pointer along, or to None if there is not another item
             del current_item
             self._count -= 1
-        else: #Not the head of the list, so need the previous node as well as the next
-            prev = self._buckets[index]
+        else:  # Not the head of the list, so need the previous node as well as the next
+            prev = current_item
             current_item = prev.next
             while current_item is not None:
                 if current_item.key == key:
@@ -97,8 +110,7 @@ class HashTable(Dictionary):
                     return
                 prev = current_item
                 current_item = current_item.next
-            raise KeyError #While loop finished without finding the key
-
+            raise KeyError  # While loop finished without finding the key
 
 
 if __name__ == "__main__":

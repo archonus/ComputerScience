@@ -6,16 +6,20 @@ def _partition(arr, low, high) -> int:
     :param high: The end of the sub-array being looked at
     :return: The index of the pivot element
     """
-    i = low - 1 #Set to this because it is incremented by one later
-    pivot = arr[high] #Choose the pivot element to be the last element in the array.
-    for j in range(low,high): #Go through the entire array
-        if arr[j] <= pivot: #If the element is less than or equal to the pivot element
+    i = low - 1  # Set to this because it is incremented by one later
+    pivot = arr[high]  # Choose the pivot element to be the last element in the array.
+    for j in range(low, high):  # Go through the entire array
+        if arr[j] <= pivot:  # If the element is less than or equal to the pivot element
             i += 1
-            arr[i], arr[j] = arr[j], arr[i] #Swap the ith element with the jth element
-    arr[i+1], arr[high] = arr[high], arr[i + 1] #The point i+1 is the point where all the elements are
-    return i + 1 #The index of the pivot element
+            arr[i], arr[j] = arr[j], arr[i]  # Swap the ith element with the jth element
+    arr[i + 1], arr[high] = (
+        arr[high],
+        arr[i + 1],
+    )  # The point i+1 is the point where all the elements are
+    return i + 1  # The index of the pivot element
 
-def _quick_sort(arr : list, low : int, high : int):
+
+def _quick_sort(arr: list, low: int, high: int):
     """
     The main quicksort function
     :param arr: The array to be sorted
@@ -23,13 +27,22 @@ def _quick_sort(arr : list, low : int, high : int):
     :param high: The end of the sub-array to be sorted. To sort the entire array, set to len(a) - 1
     :return: None, since it operates in place
     """
-    if len(arr) == 1: #If the length is 1, the array is already sorted
+    if len(arr) == 1:  # If the length is 1, the array is already sorted
         return
-    if low < high: #As long as low and high are not the same and are in the right order, sort the sub-array
-        p_i = _partition(arr,low,high) #The partition function will return the index of the pivot element
-        _quick_sort(arr,low, p_i - 1) #Sort the left half of the partitioned sub-array recursively
-        _quick_sort(arr,p_i + 1, high) #Sort the right half of the partitioned array recursively
+    if (
+        low < high
+    ):  # As long as low and high are not the same and are in the right order, sort the sub-array
+        p_i = _partition(
+            arr, low, high
+        )  # The partition function will return the index of the pivot element
+        _quick_sort(
+            arr, low, p_i - 1
+        )  # Sort the left half of the partitioned sub-array recursively
+        _quick_sort(
+            arr, p_i + 1, high
+        )  # Sort the right half of the partitioned array recursively
     return
 
-def quick_sort(arr : list):
+
+def quick_sort(arr: list):
     _quick_sort(arr, low=0, high=len(arr) - 1)

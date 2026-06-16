@@ -1,15 +1,15 @@
-
 def rle_encode(data):
     """
     Basic run-length encoding of data
     :param data: The string to be encoded
     :return: The encoded string
     """
-    encoding = ''
-    prev_char = ''
+    encoding = ""
+    prev_char = ""
     count = 1
 
-    if not data: return '' #Data is an empty string itself
+    if not data:
+        return ""  # Data is an empty string itself
 
     for char in data:
         # If the prev and current characters
@@ -17,7 +17,7 @@ def rle_encode(data):
         if char != prev_char:
             # ...then add the count and character
             # to our encoding
-            if prev_char != '': #It isn't the start of the string
+            if prev_char != "":  # It isn't the start of the string
                 encoding += str(count) + prev_char
             count = 1
             prev_char = char
@@ -32,8 +32,8 @@ def rle_encode(data):
 
 
 def rle_decode(encoded):
-    decode = ''
-    count = ''
+    decode = ""
+    count = ""
     for char in encoded:
         # If the character is numerical...
         if char.isdigit():
@@ -44,7 +44,7 @@ def rle_decode(encoded):
             # character and need to expand it for
             # the decoding
             decode += char * int(count)
-            count = ''
+            count = ""
     return decode
 
 
@@ -58,5 +58,6 @@ if __name__ == "__main__":
         encoded = input("Please enter the encoded data...")
         decoded = rle_decode(encoded)
         print(decoded)
-    else: print("Invalid input_string")
+    else:
+        print("Invalid input_string")
     input("Press enter to exit...")

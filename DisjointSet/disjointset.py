@@ -22,7 +22,7 @@ class DisjointSet:
     def add(self, k):
         # Adds a new set consisting of a single item k
         if k in self._nodes:
-            raise ValueError('Key already in a set')
+            raise ValueError("Key already in a set")
         self._nodes[k] = DisjointSetNode(k)
 
     def find_set(self, node: DisjointSetNode):
@@ -56,5 +56,5 @@ class DisjointSet:
                 yield key
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     s = DisjointSet(1, 2, 3, 4)

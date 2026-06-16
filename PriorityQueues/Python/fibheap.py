@@ -133,7 +133,9 @@ class FibHeap:
                 self.min_node = node
 
             # Loser enforcement
-            while not parent.is_root and parent.marked:  # Parent also moved into root list
+            while (
+                not parent.is_root and parent.marked
+            ):  # Parent also moved into root list
                 grandparent = parent.parent
                 # Put parent into root list
                 parent.remove_from_siblings()
@@ -143,7 +145,9 @@ class FibHeap:
                 # Look at parent's parent
                 parent = grandparent
 
-            if not parent.is_root:  # Loop terminated because there was an unmarked parent
+            if (
+                not parent.is_root
+            ):  # Loop terminated because there was an unmarked parent
                 parent.marked = True
 
     def decreasekey(self, x, priority):
@@ -176,19 +180,19 @@ class FibHeap:
                 if x.priority < y.priority:
                     y.remove_from_siblings()  # Remove from root list
                     x.add_child(y)
-                    
+
                 else:
                     x.remove_from_siblings()
                     y.add_child(x)
                     x = y  # Update for next iteration
                 del root_array[d]  # The entry in d has been subsumed
-                y.marked = x.marked = False # Update loser flag
+                y.marked = x.marked = False  # Update loser flag
                 d += 1  # Adding a child has increased the degree
             root_array[d] = x
-        #print(root_array)
+        # print(root_array)
 
         self.min_node = None
-        for root_node in root_array.values(): # Re-insert into root list
+        for root_node in root_array.values():  # Re-insert into root list
             if self.min_node is None:
                 self.min_node = root_node
             else:
@@ -205,7 +209,6 @@ class FibHeap:
         prev_min = self.min_node
 
         del self._nodes[prev_min.id]  # Remove from list of nodes
-
 
         if len(self._nodes) != 0:
             # There are still items in the queue
@@ -238,9 +241,9 @@ class FibHeap:
         return len(self) != 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import random
-    
+
     fibheap = FibHeap()
     n = 64
     ls = list(range(n))
@@ -248,13 +251,12 @@ if __name__ == '__main__':
     random.shuffle(ls)
 
     for i in range(n):
-        fibheap.push(chr(65+i),ls[i])
-    
-    for i in range(n-5):
+        fibheap.push(chr(65 + i), ls[i])
+
+    for i in range(n - 5):
         print(fibheap.popmin())
 
-    fibheap.decreasekey('S',1)
-    fibheap.decreasekey('G',0)
-    
-    print(fibheap.min_node)
+    fibheap.decreasekey("S", 1)
+    fibheap.decreasekey("G", 0)
 
+    print(fibheap.min_node)

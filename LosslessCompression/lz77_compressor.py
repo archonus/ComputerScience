@@ -1,4 +1,4 @@
-def encode(input_string, window_size = -1):
+def encode(input_string, window_size=-1):
     current_index = 0
     if window_size == 0:
         raise ValueError("Window size cannot be 0")
@@ -8,14 +8,13 @@ def encode(input_string, window_size = -1):
         if window_size < 0:
             input_buffer = input_string[:current_index]
         elif current_index - window_size > 0:
-            input_buffer = input_string[current_index - window_size: current_index]
+            input_buffer = input_string[current_index - window_size : current_index]
         else:
             input_buffer = input_string[:current_index]
 
         read = 0
         off_set = 0
         current_index += 1
-
 
 
 if __name__ == "__main__":
